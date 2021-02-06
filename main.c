@@ -53,8 +53,8 @@ void chaos(int *p, unsigned char image[H][W][RGB_NUM], const int t) {
     printf("x: %d\ty: %d\n", x, y);
     */
     image[y][x][R] = (image[y+1][x+1][R] + 5*zero_or_one[rand()%prob]) % 256;
-    image[y][x][G] = (image[y+1][x+1][R] + 5*zero_or_one[rand()%prob]) % 256;
-    image[y][x][B] = (image[y+1][x+1][R] + 5*zero_or_one[rand()%prob]) % 256;
+    image[y][x][G] = (image[y+1][x+1][G] + 5*zero_or_one[rand()%prob]) % 256;
+    image[y][x][B] = (image[y+1][x+1][B] + 5*zero_or_one[rand()%prob]) % 256;
 
     p[1] = p[1] + d[rand() % 4];
     p[0] = p[0] + d[rand() % 4];
