@@ -1,7 +1,7 @@
 CC = gcc
 CMPNTS = main.o io.o
 
-all: main
+all: main run
 
 main: $(CMPNTS)
 	$(CC) -o main $(CMPNTS)
