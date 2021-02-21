@@ -39,7 +39,7 @@ void draw_line(const int x1a, const int y1a, const int x2a, const int y2a,
     if(dx > dy*slope_pos) {
         //slope < 1
         int x = x1, y = y1;
-        int d = 2*dy-dx*slope_pos*-1;
+        int d = 2*dy*slope_pos-dx*slope_pos*-1;
 
         while(x <= x2) {
             plot(x,y,w,img,color);
