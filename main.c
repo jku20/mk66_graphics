@@ -1,65 +1,84 @@
 #include "io.h"
+#include "drawer.h"
 
 #include <time.h>
-#include <stdlib.h>
 
 #include <stdio.h>
+#include <string.h>
 
-#define W 1000
-#define H 1000
+#define W 800
+#define H 800
 
-#define min(x,y) (x) > (y) ? (y) : (x)
-#define max(x,y) (x) < (y) ? (y) : (x)
-
-void chaos(int *pair, unsigned char image[H][W][RGB_NUM], const int t);
+#define TESTS 12
 
 unsigned char img[H][W][RGB_NUM];
 
-const int t = W;
+const int tests[TESTS][4] = {
+    //octants 1 and 5
+    {0, 0, W-1, H-1},
+    {0, 0, W-1, H/2},
+    {W-1, H-1, 0, H/2},
+    //octants 8 and 4
+    {0, H-1, W-1, 0},
+    {0, H-1, W-1, H/2},
+    {W-1, 0, 0, H/2},
+    //octants 2 and 6
+    {0, 0, W/2, H-1},
+    {W-1, H-1, W/2, 0},
+    //octants 7 and 3
+    {0, H-1, W/2, 0},
+    {W-1, 0, W/2, H-1},
+    //horizontal and vertical
+    {0, H/2, W-1, H/2},
+    {W/2, 0, W/2, H-1}
+};
 
-int main() {
+void line_test() {
+    memset(img, 0, sizeof(img));
 
-    srand(time(NULL));
-
-    int pair[] = {t,t};
-
-    const int eopch = 50000000;
-
+    unsigned char c[RGB_NUM] = {0,255,0};
     int i;
-    for(i = 0; i < eopch; i++) {
-        if(!(i % (eopch/10))) {
-            printf("p[0]: %d\tp[1]: %d\n", pair[0], pair[1]);
+    for(i = 0; i < TESTS; ++i) {
+        //changing color
+        switch(i) {
+            case 3: 
+                c[B] = 255;
+                break;
+            case 6:
+                c[R] = 255;
+                c[G] = 0;
+                c[B] = 0;
+                break;
+            case 8:
+                c[B] = 255;
+                break;
+            case 10:
+                c[G] = 255;
+                c[B] = 0;
+                break;
+            default:
+                break;
         }
-        chaos(pair, img, t);
+
+        const int *test = (int *) tests[i];
+        printf("runing test %d\n", i);
+        draw_line(test[0], test[1], test[2], test[3], W, (unsigned char *)img, c);
     }
 
-    write_PPM((unsigned char*) img, H, W, "test.ppm");
-
-    return 0;
+    write_PPM((unsigned char *) img, W, H, "test.ppm");
 }
 
-//i don't even know
-const int d[] = {-1,1,0,0};
-const int zero_or_one[] = {0,1,1};
-const int prob = 3;
-void chaos(int *p, unsigned char image[H][W][RGB_NUM], const int t) {
-    const int thing = 800;
+void cool_image() {
+    memset(img, 0, sizeof(img));
+}
 
-    int x = p[0], y = p[1];
-    x = min(W-2, max(x,0));
-    y = min(H-2, max(y,0));
-    /*
-    printf("p[0]: %d\tp[1]: %d\n", p[0], p[1]);
-    printf("x: %d\ty: %d\n", x, y);
-    */
-    image[y][x][R] = (image[y+1][x+1][R] + 5*zero_or_one[rand()%prob]) % 256;
-    image[y][x][G] = (image[y+1][x+1][G] + 5*zero_or_one[rand()%prob]) % 256;
-    image[y][x][B] = (image[y+1][x+1][B] + 5*zero_or_one[rand()%prob]) % 256;
+int main() {
+    const clock_t start = clock();
 
-    p[1] = p[1] + d[rand() % 4];
-    p[0] = p[0] + d[rand() % 4];
+    line_test();
 
-    p[0] %= W;
-    p[1] %= H;
+    const clock_t end = clock();
+    printf("time: %lfsec\n", (double)(end - start)/CLOCKS_PER_SEC);
 
+    return 0;
 }
