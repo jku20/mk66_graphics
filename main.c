@@ -66,7 +66,7 @@ void line_test() {
         draw_line(test[0], test[1], test[2], test[3], W, (unsigned char *)img, c);
     }
 
-    write_PPM((unsigned char *) img, W, H, "test.ppm");
+    write_PPM((unsigned char *) img, H, W, "test.ppm");
 }
 
 const int rand1[7] = {-1,-1,-1,-1,1,1,0};
@@ -120,6 +120,7 @@ void squiggle(int sx, int sy, unsigned char c[3]) {
 
 
         if(sx == W - 1) return;
+        if(sy == H - 1) return;
         squiggle(sx, sy, c);
     }
 }
@@ -130,7 +131,7 @@ void cool_image() {
     char col[3] = {0,0,0};
     squiggle(0, H/2, col);
 
-    write_PPM((unsigned char *) img, W, H, "test.ppm");
+    write_PPM((unsigned char *) img, H, W, "test.ppm");
 }
 
 int main() {
