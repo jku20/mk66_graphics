@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#define W 800
-#define H 800
+#define W 1000
+#define H 500
 
 #define TESTS 12
 
@@ -128,7 +128,7 @@ void squiggle(int sx, int sy, unsigned char c[3]) {
 void cool_image() {
     memset(img, 0, sizeof(img));
 
-    char col[3] = {0,0,0};
+    unsigned char col[3] = {0,0,0};
     squiggle(0, H/2, col);
 
     write_PPM((unsigned char *) img, H, W, "test.ppm");
@@ -139,8 +139,8 @@ int main() {
 
     srand(time(NULL));
 
-    line_test();
-    //cool_image();
+    //line_test();
+    cool_image();
 
     const clock_t end = clock();
     printf("time: %lfsec\n", (double)(end - start)/CLOCKS_PER_SEC);
