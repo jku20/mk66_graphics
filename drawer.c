@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+
+
 /*
  * plots a color, make sure to check the number is in bounds
  * the color array should be {R,G,B}
@@ -9,8 +11,8 @@
 */
 
 void plot(const int x, const int y, 
-        const int w, unsigned char *img, const char color[3]) {
-    memcpy(img+(y*w*3)+x*3, color, sizeof(char) * 3);
+        const int w, const int h, unsigned char img[h][w][3], const char color[3]) {
+    memcpy(img[y][x], color, sizeof(char) * 3);
 }
 
 /*
@@ -19,7 +21,7 @@ void plot(const int x, const int y,
 */
 
 void draw_line(const int x1a, const int y1a, const int x2a, const int y2a,
-        const int w, unsigned char *img, const char color[3]) {
+        const int w, const int h, unsigned char img[h][w][3], const char color[3]) {
     int x1,x2,y1,y2;
     //preprocess starting coords so larger x is always x2
     if(x1a > x2a) {
@@ -42,7 +44,7 @@ void draw_line(const int x1a, const int y1a, const int x2a, const int y2a,
         int d = 2*dy*slope_pos-dx*slope_pos*-1;
 
         while(x <= x2) {
-            plot(x,y,w,img,color);
+            plot(x,y,w,h,img,color);
 
             if(d*slope_pos > 0) {
                 y+=slope_pos;
@@ -58,7 +60,7 @@ void draw_line(const int x1a, const int y1a, const int x2a, const int y2a,
         int d = 2*dx*slope_pos*-1-dy*slope_pos;
 
         while(y*slope_pos <= y2*slope_pos) {
-            plot(x,y,w,img,color);
+            plot(x,y,w,h,img,color);
 
             if(d*slope_pos < 0) {
                 x+=1;
