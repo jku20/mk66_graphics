@@ -1,15 +1,17 @@
 CC = gcc
-CMPNTS = main.o io.o drawer.o
+CMPNTS = main.o io.o drawer.o matrix.o
 
-all: main run
+all: main #run
 
 main: $(CMPNTS)
 	$(CC) -o main $(CMPNTS)
 
 
-main.o: main.c drawer.h io.h
+main.o: main.c drawer.h io.h matrix.h
+
 io.o: io.c io.h
 drawer.o: drawer.c drawer.h
+matrix.o: matrix.c matrix.h
 
 .PHONY: all run clean
 
