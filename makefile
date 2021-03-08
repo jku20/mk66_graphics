@@ -1,7 +1,7 @@
 CC = gcc
 CMPNTS = main.o io.o drawer.o matrix.o
 
-all: main #run
+all: main run
 
 main: $(CMPNTS)
 	$(CC) -o main $(CMPNTS)

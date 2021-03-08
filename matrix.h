@@ -1,15 +1,25 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
 
+#define MAX_MATRIX_HEIGHT 4
+
 typedef double mxtype;
-//for convience matricies are stored mx[H][W]
+//matricies stored as arr[W][H]
+typedef struct {
+    int w, w_size;
+    mxtype mtrx[][MAX_MATRIX_HEIGHT];
+} matrix;
 
-void print_matrix(const int w, const int h, const mxtype m[h][w]);
-void ident(const int s, mxtype m[s][s]);
-void matrix_mult(const int wa, const int ha , const mxtype a[ha][wa],
-        const int wb, const int hb, mxtype b[hb][wb]);
+matrix *mk_matrix(const int w);
+matrix *free_matrix(matrix *mtrx);
+void cpy_matrix(const matrix *src, matrix *dest);
+matrix *grow_matrix(matrix *mtrx, const int newcols);
 
-void copy_matrix(const int w, const int h, const mxtype src[h][w], mxtype dest[h][w]);
+void print_matrix(const matrix *mtrx);
+void ident(matrix *mtrx);
+void matrix_mult(const matrix *a, matrix *b);
+matrix *mx_resize(matrix *mtrx, const int n);
+matrix *mx_reserve(matrix *mtrx, const int n);
 //maybe some more if needed
 
 #endif

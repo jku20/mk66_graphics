@@ -1,7 +1,56 @@
 #include "drawer.h"
 
+#include "matrix.h"
+
 #include <string.h>
 
+/*
+ * adds a point to a given matrix
+ * returns: pointer to the matrix
+*/
+
+matrix *add_point(matrix *points, const double x, const double y, const double z) {
+    points = grow_matrix(points, 1);
+
+    const int ind = points->w-1;
+
+    points->mtrx[ind][0] = x;
+    points->mtrx[ind][1] = y;
+    points->mtrx[ind][2] = z;
+    points->mtrx[ind][3] = 1.0;
+
+    return points;
+}
+
+/*
+ * adds edge to a given matrix
+ * returns: pointer to the matrix
+*/
+
+matrix *add_edge(matrix *points,
+        const double x0, const double y0, const double z0,
+        const double x1, const double y1, const double z1
+        ) {
+    points = add_point(points, x0, y0, z0);
+    points = add_point(points, x1, y1, z1);
+
+    return points;
+}
+
+/*
+ * draws lines to a given img array assumes matrix has even amount of 
+ * returns: void
+*/
+
+void draw_lines(matrix *points, const int w, const int h, unsigned char img[h][w][3], const char color[3]) {
+    const int size = points->w;
+    int i,j;
+    for(i = 1; i < size; i+=2) {
+        const int x0 = (int) points->mtrx[i][0], x1 = (int) points->mtrx[i-1][0];
+        const int y0 = (int) points->mtrx[i][1], y1 = (int) points->mtrx[i-1][1];
+        draw_line(x0, y0, x1, y1, w, h, img, color);
+    }
+}
 
 
 /*
