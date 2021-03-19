@@ -1,8 +1,5 @@
 #include "matrix.h"
 
-//defines axis constants (I don't know why I need this in both the .h and .c file for stuff to compile)
-typedef enum {XAXIS, YAXIS, ZAXIS} axis;
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -177,39 +174,48 @@ matrix *mk_scale (const mxtype x, const mxtype y, const mxtype z)
 
 /*
  * creates and returns a rotation matrix, rotation by theta in the specified axis
- * returns: rotation matrix
+ * returns: rotation matrix rotating around specified axis
 */
 
-matrix *mk_rot (const double theta, const axis a)
+matrix *mk_rot_xaxis (const double theta)
 {
     matrix *mout = mk_matrix (4);
 
     mout->mtrx[3][3] = 1.0;
-    if (a == ZAXIS)
-    {
-        mout->mtrx [0][0] =  cos (theta);
-        mout->mtrx [0][1] = -sin (theta);
-        mout->mtrx [1][0] =  sin (theta);
-        mout->mtrx [1][1] =  cos (theta);
+    mout->mtrx[0][0] = 1.0;
 
-        mout->mtrx[2][2] = 1.0;
-    } else if (a == XAXIS)
-    {
-        mout->mtrx[1][1] =  cos (theta);
-        mout->mtrx[1][2] = -sin (theta);
-        mout->mtrx[2][1] =  sin (theta);
-        mout->mtrx[2][2] =  cos (theta);
+    mout->mtrx[1][1] =  cos (theta);
+    mout->mtrx[1][2] = -sin (theta);
+    mout->mtrx[2][1] =  sin (theta);
+    mout->mtrx[2][2] =  cos (theta);
 
-        mout->mtrx[0][0] = 1.0;
-    } else 
-    {
-        mout->mtrx[0][0] =  cos (theta);
-        mout->mtrx[0][2] =  sin (theta);
-        mout->mtrx[2][2] =  cos (theta);
-        mout->mtrx[2][1] = -sin (theta);
+    return mout;
+}
+matrix *mk_rot_yaxis (const double theta)
+{
+    matrix *mout = mk_matrix (4);
 
-        mout->mtrx[1][1] = 1.0;
-    }
+    mout->mtrx[3][3] = 1.0;
+    mout->mtrx[1][1] = 1.0;
+
+    mout->mtrx[0][0] =  cos (theta);
+    mout->mtrx[0][2] =  sin (theta);
+    mout->mtrx[2][2] =  cos (theta);
+    mout->mtrx[2][1] = -sin (theta);
+
+    return mout;
+}
+matrix *mk_rot_zaxis (const double theta)
+{
+    matrix *mout = mk_matrix (4);
+
+    mout->mtrx[3][3] = 1.0;
+    mout->mtrx[2][2] = 1.0;
+
+    mout->mtrx [0][0] =  cos (theta);
+    mout->mtrx [0][1] = -sin (theta);
+    mout->mtrx [1][0] =  sin (theta);
+    mout->mtrx [1][1] =  cos (theta);
 
     return mout;
 }
