@@ -6,6 +6,6 @@
 #define B 2
 #define RGB_NUM 3
 
-int write_PPM(const int w, const int h, const unsigned char img[h][w][RGB_NUM], const char *out_file);
+int write_PPM (const int w, const int h, const unsigned char img[h][w][RGB_NUM], const char *out_file);
 
 #endif
