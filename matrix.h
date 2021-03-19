@@ -15,8 +15,12 @@ matrix *free_matrix(matrix *mtrx);
 void cpy_matrix(const matrix *src, matrix *dest);
 matrix *grow_matrix(matrix *mtrx, const int newcols);
 
-void print_matrix(const matrix *mtrx);
 void ident(matrix *mtrx);
+matrix *mk_translate (mxtype x, mxtype y, mxtype z);
+matrix *mk_scale (mxtype x, mxtype y, mxtype z);
+matrix *mk_rot (double theta, enum axis a);
+
+void print_matrix(const matrix *mtrx);
 void matrix_mult(const matrix *a, matrix *b);
 matrix *mx_resize(matrix *mtrx, const int n);
 matrix *mx_reserve(matrix *mtrx, const int n);

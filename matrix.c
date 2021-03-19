@@ -6,7 +6,7 @@
 #include <math.h>
 
 //defines axis constants
-enum axis {XAXIS, YAXIS, ZAXIS};
+typedef enum {XAXIS, YAXIS, ZAXIS} axis;
 
 //matricies stored as arr[W][H]
 
@@ -164,7 +164,7 @@ matrix *mk_scale (mxtype x, mxtype y, mxtype z)
  * returns: rotation matrix
 */
 
-matrix *mk_rot (double theta, enum axis a)
+matrix *mk_rot (double theta, axis a)
 {
     matrix *mout = mk_matrix (4);
 
