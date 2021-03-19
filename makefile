@@ -1,10 +1,11 @@
 CC = gcc
 CMPNTS = main.o io.o drawer.o matrix.o
+ARGS = -lm
 
 all: main run
 
 main: $(CMPNTS)
-	$(CC) -o main $(CMPNTS)
+	$(CC) -o main $(CMPNTS) $(ARGS)
 
 
 main.o: main.c drawer.h io.h matrix.h

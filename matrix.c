@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
+
+//defines axis constants
+enum axis {XAXIS, YAXIS, ZAXIS};
 
 //matricies stored as arr[W][H]
 
@@ -119,6 +123,79 @@ void ident(matrix *m) {
     for(i = 0; i < MAX_MATRIX_HEIGHT; i++) {
         m->mtrx[i][i] = 1.0;
     }
+}
+
+/*
+ * creates and returns a translation matrix, translated by x,y,z
+ * returns: translation matrix
+*/
+
+matrix *mk_translate (mxtype x, mxtype y, mxtype z)
+{
+    matrix *mout = mk_matrix (4);
+    ident (mout);
+
+    mout->mtrx[0][3] = x;
+    mout->mtrx[1][3] = y;
+    mout->mtrx[2][3] = z;
+
+    return mout;
+}
+
+/*
+ * creates and returns a dilation matrix, dilated by x,y,z
+ * returns: dilation matrix
+*/
+
+matrix *mk_scale (mxtype x, mxtype y, mxtype z)
+{
+    matrix *mout = mk_matrix (4);
+
+    mout->mtrx[0][0] = x;
+    mout->mtrx[1][1] = y;
+    mout->mtrx[2][2] = z;
+    mout->mtrx[3][3] = 1.0;
+
+    return mout;
+}
+
+/*
+ * creates and returns a rotation matrix, rotation by theta in the specified axis
+ * returns: rotation matrix
+*/
+
+matrix *mk_rot (double theta, enum axis a)
+{
+    matrix *mout = mk_matrix (4);
+
+    mout->mtrx[3][3] = 1.0;
+    if (a == ZAXIS)
+    {
+        mout->mtrx [0][0] =  cos (theta);
+        mout->mtrx [0][1] = -sin (theta);
+        mout->mtrx [1][0] =  sin (theta);
+        mout->mtrx [1][1] =  cos (theta);
+
+        mout->mtrx[2][2] = 1.0;
+    } else if (a == XAXIS)
+    {
+        mout->mtrx[1][1] =  cos (theta);
+        mout->mtrx[1][2] = -sin (theta);
+        mout->mtrx[2][1] =  sin (theta);
+        mout->mtrx[2][2] =  cos (theta);
+
+        mout->mtrx[0][0] = 1.0;
+    } else 
+    {
+        mout->mtrx[0][0] =  cos (theta);
+        mout->mtrx[0][2] =  sin (theta);
+        mout->mtrx[2][2] =  cos (theta);
+        mout->mtrx[2][1] = -sin (theta);
+
+        mout->mtrx[1][1] = 1.0;
+    }
+
+    return mout;
 }
 
 /*
