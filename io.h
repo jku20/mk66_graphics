@@ -7,5 +7,6 @@
 #define RGB_NUM 3
 
 int write_PPM (const int w, const int h, const unsigned char img[h][w][RGB_NUM], const char *out_file);
-
+void display (const int w, const int h, const unsigned char img[h][w][RGB_NUM]);
+void save_extension (const int w, const int h, const unsigned char img[h][w][RGB_NUM], const char *out_file);
 #endif
