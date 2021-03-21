@@ -21,7 +21,7 @@ matrix *mk_translate (const mxtype x, const mxtype y, const mxtype z);
 matrix *mk_scale (const mxtype x, const mxtype y, const mxtype z);
 matrix *mk_rot_xaxis (const double theta);
 matrix *mk_rot_yaxis (const double theta);
-matrix *mk_rot_xaxis (const double theta);
+matrix *mk_rot_zaxis (const double theta);
 
 void print_matrix (const matrix *mtrx);
 void matrix_mult (const matrix *a, matrix *b);
