@@ -30,7 +30,7 @@ matrix *mk_matrix (const int w)
  * returns: void
 */
 
-inline void cpy_matrix (const matrix *src, matrix *dest)
+void cpy_matrix (const matrix *src, matrix *dest)
 {
     memcpy (dest->mtrx, src->mtrx, sizeof (mxtype) * src->w * MAX_MATRIX_HEIGHT);
 }
@@ -148,9 +148,9 @@ matrix *mk_translate (const mxtype x, const mxtype y, const mxtype z)
     matrix *mout = mk_matrix (4);
     ident (mout);
 
-    mout->mtrx[0][3] = x;
-    mout->mtrx[1][3] = y;
-    mout->mtrx[2][3] = z;
+    mout->mtrx[3][0] = x;
+    mout->mtrx[3][1] = y;
+    mout->mtrx[3][2] = z;
 
     return mout;
 }
@@ -174,6 +174,7 @@ matrix *mk_scale (const mxtype x, const mxtype y, const mxtype z)
 
 /*
  * creates and returns a rotation matrix, rotation by theta in the specified axis
+ * theta is in radians
  * returns: rotation matrix rotating around specified axis
 */
 
@@ -185,8 +186,8 @@ matrix *mk_rot_xaxis (const double theta)
     mout->mtrx[0][0] = 1.0;
 
     mout->mtrx[1][1] =  cos (theta);
-    mout->mtrx[1][2] = -sin (theta);
-    mout->mtrx[2][1] =  sin (theta);
+    mout->mtrx[2][1] = -sin (theta);
+    mout->mtrx[1][2] =  sin (theta);
     mout->mtrx[2][2] =  cos (theta);
 
     return mout;
@@ -199,9 +200,9 @@ matrix *mk_rot_yaxis (const double theta)
     mout->mtrx[1][1] = 1.0;
 
     mout->mtrx[0][0] =  cos (theta);
-    mout->mtrx[0][2] =  sin (theta);
+    mout->mtrx[2][0] =  sin (theta);
     mout->mtrx[2][2] =  cos (theta);
-    mout->mtrx[2][1] = -sin (theta);
+    mout->mtrx[0][2] = -sin (theta);
 
     return mout;
 }
@@ -212,10 +213,10 @@ matrix *mk_rot_zaxis (const double theta)
     mout->mtrx[3][3] = 1.0;
     mout->mtrx[2][2] = 1.0;
 
-    mout->mtrx [0][0] =  cos (theta);
-    mout->mtrx [0][1] = -sin (theta);
-    mout->mtrx [1][0] =  sin (theta);
-    mout->mtrx [1][1] =  cos (theta);
+    mout->mtrx[0][0] =  cos (theta);
+    mout->mtrx[1][0] = -sin (theta);
+    mout->mtrx[0][1] =  sin (theta);
+    mout->mtrx[1][1] =  cos (theta);
 
     return mout;
 }

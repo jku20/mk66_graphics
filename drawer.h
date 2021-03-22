@@ -14,5 +14,6 @@ void plot (const int x, const int y,
         const int w, const int h, unsigned char img[h][w][3], const char color[3]);
 void draw_line (const int x1a, const int y1a, const int x2a, const int y2a,
         const int w, const int h, unsigned char img[h][w][3], const char color[3]);
+void clear_screen (const int w, const int h, unsigned char img[h][w][RGB_NUM]);
 
 #endif

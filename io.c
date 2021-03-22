@@ -32,7 +32,7 @@ int write_PPM (const int w, const int h, const unsigned char img[h][w][RGB_NUM],
 void display (const int w, const int h, const unsigned char img[h][w][RGB_NUM])
 {
     FILE *f;
-    popen ("display", "w");
+    f = popen ("display", "w");
 
     fprintf (f, "P6\n%d %d\n255\n",w,h);
     fwrite (img, w * h * 3, sizeof (char), f);

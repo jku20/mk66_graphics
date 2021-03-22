@@ -25,6 +25,6 @@ enum token
 
 enum token get_token (void);
 matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix, 
-        int w, int h, unsigned char img[h][w][RGB_NUM]);
+        const int w, const int h, unsigned char img[h][w][RGB_NUM]);
 
 #endif

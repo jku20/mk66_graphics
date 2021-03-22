@@ -63,16 +63,28 @@ void draw_lines (matrix *points, const int w, const int h, unsigned char img[h][
  * Returns: void
 */
 
-inline void plot (const int x, const int y, 
+void plot (const int x, const int y, 
         const int w, const int h, unsigned char img[h][w][3], const char color[3]) 
 {
-    memcpy (img[y][x], color, sizeof(char) * 3);
+    if (x < w && y < h && x >=0 && y >= 0) 
+        memcpy (img[y][x], color, sizeof(char) * 3);
+}
+
+/*
+ * sets everything in img to 0
+ * returns: void
+*/
+
+void clear_screen (const int w, const int h, unsigned char img[h][w][3]) 
+{
+    memset (img, 0, sizeof (char) * 3 * w * h);
 }
 
 /*
  * bresenham's line algorithm, draws a line given two coordinates currently the dumb casework version
  * Returns: void
 */
+
 
 void draw_line (const int x1a, const int y1a, const int x2a, const int y2a,
         const int w, const int h, unsigned char img[h][w][3], const char color[3]) 

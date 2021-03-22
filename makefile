@@ -1,6 +1,6 @@
 CC = gcc
 CMPNTS = main.o io.o drawer.o matrix.o parser.o
-ARGS = -lm
+ARGS = -lm -g
 
 all: main #run
 

@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define M_PI 3.14159265358979323846264338327
+
 /*
  * reads a token from stdin
  * returns: the token it read
@@ -20,6 +22,8 @@ enum token get_token (void)
     if (fgets (buff, MAX_BUFFER_SIZE, stdin) != NULL)
     {
         sscanf (buff, "%s", buff);
+
+        buff[strcspn (buff, "\n")] = '\0';
 
         if (strcmp (buff, "line") == 0)
         {
@@ -45,7 +49,7 @@ enum token get_token (void)
         {
             return APPLY;
         }
-        else if (strcmp (buff, "disply") == 0) 
+        else if (strcmp (buff, "display") == 0) 
         {
             return DISPLAY;
         }
@@ -68,11 +72,11 @@ enum token get_token (void)
  * takes a token and processes it (possibly reading from stdin itself)
  * t_rix is the transformation matrix (I couldn't help myself)
  * e_rix is the edge matrix
- * returns: pointer to e_rix on a success process, else NULL on INVALID or END
+ * returns: pointer to e_rix
 */
 
 matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix, 
-        int w, int h, unsigned char img[h][w][RGB_NUM]) 
+        const int w, const int h, unsigned char img[h][w][RGB_NUM]) 
 {
     char buff[MAX_BUFFER_SIZE];
     matrix *tmp;
@@ -80,10 +84,10 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
     switch (tok)
     {
         case END:
-            return NULL;
+            return e_rix;
             break;
         case INVALID:
-            return NULL;
+            return e_rix;
             break;
         case LINE:
             ;
@@ -97,6 +101,7 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             break;
         case IDENT:
             ident (t_rix);
+            return e_rix;
             break;
         case SCALE:
             ;
@@ -107,7 +112,7 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
 
             //make functions which just morph an array in the future
             tmp = mk_scale (sx, sy, sz);
-            cpy_matrix (tmp, t_rix);
+            matrix_mult (tmp, t_rix);
             free_matrix (tmp), tmp = NULL;
 
             return e_rix;
@@ -120,7 +125,8 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             sscanf (buff, "%lf %lf %lf", &tx, &ty, &tz);
 
             tmp = mk_translate (tx, ty, tz);
-            cpy_matrix (tmp, t_rix);
+            matrix_mult (tmp, t_rix);
+
             free_matrix (tmp); tmp = NULL;
 
             return e_rix;
@@ -133,27 +139,29 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%c %lf", &axis, &theta);
 
+            theta *= M_PI/180.0;
+
             if (axis == 'x')
             {
                 tmp = mk_rot_xaxis (theta);
-                cpy_matrix (tmp, t_rix);
+                matrix_mult (tmp, t_rix);
                 free_matrix (tmp);
             }
             else if (axis == 'y')
             {
                 tmp = mk_rot_yaxis (theta);
-                cpy_matrix (tmp, t_rix);
+                matrix_mult (tmp, t_rix);
                 free_matrix (tmp);
             }
             else if (axis == 'z')
             {
                 tmp = mk_rot_zaxis (theta);
-                cpy_matrix (tmp, t_rix);
+                matrix_mult (tmp, t_rix);
                 free_matrix (tmp);
             }
             else 
             {
-                return NULL;
+                return e_rix;
             }
             return e_rix;
             break;
@@ -162,16 +170,21 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             return e_rix;
             break;
         case DISPLAY:
+            ;
+            const char col[] = {255,255,255}; 
+
+            clear_screen (w, h, img);
+            draw_lines (e_rix, w, h, img, col);
+
             display (w, h, img);
+
             return e_rix;
             break;
         case SAVE:
             ;
 
             fgets (buff, MAX_BUFFER_SIZE, stdin);
-
-            int len = strlen (buff);
-            buff[len - 2 > 0 ? len - 2 : 1] = '\0';
+            buff[strcspn (buff, "\n")] = '\0';
 
             save_extension (w, h, img, buff);
             return e_rix;
