@@ -2,7 +2,7 @@ CC = gcc
 CMPNTS = main.o io.o drawer.o matrix.o parser.o
 ARGS = -lm -g
 
-all: main #run
+all: main run
 
 main: $(CMPNTS)
 	$(CC) -o main $(CMPNTS) $(ARGS)
@@ -19,10 +19,7 @@ parser.o: parser.c parser.h
 
 #requres imagemagick
 run: main
-	./main
-	convert test.ppm test.png
-	rm test.ppm
-	display test.png
+	./main < script
 
 clean:
 	rm *.o
