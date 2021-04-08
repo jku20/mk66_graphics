@@ -44,10 +44,10 @@ matrix *add_edge (matrix *points,
  * returns: void
 */
 
-void draw_lines (matrix *points, const int w, const int h, unsigned char img[h][w][3], const char color[3]) 
+void draw_lines (matrix *points, const int w, const int h, unsigned char img[h][w][3], const unsigned char color[3]) 
 {
     const int size = points->w;
-    int i,j;
+    int i;
     for (i = 1; i < size; i+=2) 
     {
         const int x0 = (int) points->mtrx[i][0], x1 = (int) points->mtrx[i-1][0];
@@ -64,10 +64,10 @@ void draw_lines (matrix *points, const int w, const int h, unsigned char img[h][
 */
 
 void plot (const int x, const int y, 
-        const int w, const int h, unsigned char img[h][w][3], const char color[3]) 
+        const int w, const int h, unsigned char img[h][w][3], const unsigned char color[3]) 
 {
     if (x < w && y < h && x >=0 && y >= 0) 
-        memcpy (img[y][x], color, sizeof(char) * 3);
+        memcpy (img[y][x], color, sizeof(unsigned char) * 3);
 }
 
 /*
@@ -87,7 +87,7 @@ void clear_screen (const int w, const int h, unsigned char img[h][w][3])
 
 
 void draw_line (const int x1a, const int y1a, const int x2a, const int y2a,
-        const int w, const int h, unsigned char img[h][w][3], const char color[3]) 
+        const int w, const int h, unsigned char img[h][w][3], const unsigned char color[3]) 
 {
     int x1,x2,y1,y2;
     //preprocess starting coords so larger x is always x2

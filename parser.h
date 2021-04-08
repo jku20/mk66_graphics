@@ -12,14 +12,22 @@
 enum token
 {
     END,
+
     LINE,
     IDENT,
+
     SCALE,
     MOVE,
     ROTATE,
+
+    CIRCLE,
+    HERMITE,
+    BEZIER,
+
     APPLY,
     DISPLAY,
     SAVE,
+
     INVALID
 };
 

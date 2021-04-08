@@ -16,7 +16,10 @@
 
 enum token get_token (void)
 {
-    int out;
+    //psudo map, essentually hashing the tokens by a predefined index
+    static const char *tokens[] = {"line", "ident", "scale", "move", "rotate", "apply", "display", "save", "circle", "hermite", "bezier", NULL};
+    static const enum token semantics[] = {LINE, IDENT, SCALE, MOVE, ROTATE, APPLY, DISPLAY, SAVE, CIRCLE, HERMITE, BEZIER};
+
     char buff[MAX_BUFFER_SIZE];
 
     if (fgets (buff, MAX_BUFFER_SIZE, stdin) != NULL)
@@ -25,42 +28,12 @@ enum token get_token (void)
 
         buff[strcspn (buff, "\n")] = '\0';
 
-        if (strcmp (buff, "line") == 0)
-        {
-            return LINE; 
-        }
-        else if (strcmp (buff, "ident") == 0)
-        {
-            return IDENT;
-        }
-        else if (strcmp (buff, "scale") == 0) 
-        {
-            return SCALE;
-        }
-        else if (strcmp (buff, "move") == 0)
-        {
-            return MOVE;
-        }
-        else if (strcmp (buff, "rotate") == 0) 
-        {
-            return ROTATE;
-        }
-        else if (strcmp (buff, "apply") == 0) 
-        {
-            return APPLY;
-        }
-        else if (strcmp (buff, "display") == 0) 
-        {
-            return DISPLAY;
-        }
-        else if (strcmp (buff, "save") == 0) 
-        {
-            return SAVE;
-        }
-        else 
-        {
-            return INVALID;
-        }
+        int i;
+        for (i = 0; tokens[i] != NULL; i++)
+            if (strcmp (buff, tokens[i]) == 0)
+                return semantics[i];
+
+        return INVALID;
     } 
     else 
     {
@@ -171,7 +144,7 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             break;
         case DISPLAY:
             ;
-            const char col[] = {255,255,255}; 
+            const unsigned char col[] = {255,255,255}; 
 
             clear_screen (w, h, img);
             draw_lines (e_rix, w, h, img, col);
@@ -189,8 +162,18 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             save_extension (w, h, img, buff);
             return e_rix;
             break;
+        case CIRCLE:
+            break;
+        case HERMITE:
+            break;
+        case BEZIER:
+            break;
         default:
             return e_rix;
             break;
     }
+
+    //really shouldn't ever get here but eh, just to be safe
+    printf ("something has gone horribly wrong from parse_token\n");
+    return e_rix;
 }
