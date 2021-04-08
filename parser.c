@@ -6,8 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
-#define M_PI 3.14159265358979323846264338327
+#include <math.h>
 
 /*
  * reads a token from stdin
@@ -163,6 +162,15 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             return e_rix;
             break;
         case CIRCLE:
+            ;
+            double cx, cy, cz, r, stp;
+
+            fgets (buff, MAX_BUFFER_SIZE, stdin);
+            sscanf (buff, "%lf %lf %lf %lf %lf", &cx, &cy, &cz, &r, &stp);
+
+            e_rix = add_circle (e_rix, cx, cy, cz, r, stp);
+
+            return e_rix;
             break;
         case HERMITE:
             break;

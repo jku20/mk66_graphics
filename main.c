@@ -21,8 +21,8 @@ int main()
     matrix *t_rix = mk_matrix (4); //I am sorry, the pun is just too good
 
     enum token tok;
-    while ((tok = get_token())) 
-        e_list = parse_token ( tok, t_rix, e_list, W, H, img);
+    while ((tok = get_token()))
+        e_list = parse_token (tok, t_rix, e_list, W, H, img);
 
     free_matrix (t_rix); t_rix = NULL;
     free_matrix (e_list); e_list = NULL;

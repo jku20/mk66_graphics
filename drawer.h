@@ -16,4 +16,8 @@ void draw_line (const int x1a, const int y1a, const int x2a, const int y2a,
         const int w, const int h, unsigned char img[h][w][3], const unsigned char color[3]);
 void clear_screen (const int w, const int h, unsigned char img[h][w][RGB_NUM]);
 
+matrix *add_circle (matrix *edges, 
+        const double cx, const double cy, const double cz,
+        const double r, const double step
+        );
 #endif

@@ -3,6 +3,7 @@
 #include "matrix.h"
 
 #include <string.h>
+#include <math.h>
 
 /*
  * adds a point to a given matrix
@@ -146,4 +147,30 @@ void draw_line (const int x1a, const int y1a, const int x2a, const int y2a,
             d+=b;
         }
     }
+}
+
+/*
+ * adds a "circle" to the edge list based on a center x,y,z, radius and step
+ * note the circle is in the xy plane, not the z plane
+ * I think if step is too too big stuff might die but there is no reason for step to actually be that big
+ * returns: edges matrix
+*/
+
+matrix *add_circle (matrix *edges, 
+        const double cx, const double cy, const double cz,
+        const double r, const double step
+        )
+{
+    double t;
+    for (t = step; t <= 1.0 + step; t+=step)
+    {
+        //if (t != 0.0) printf ("t: %lf\n", t);
+        double p_t = t-step;
+        edges = add_edge (edges,
+                cx + r * cos (2 * M_PI * p_t), cy + r * sin (2 * M_PI * p_t), cz,
+                cx + r * cos (2 * M_PI * t), cy + r * sin (2 * M_PI * t), cz
+                );
+    }
+
+    return edges;
 }
