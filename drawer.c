@@ -164,7 +164,6 @@ matrix *add_circle (matrix *edges,
     double t;
     for (t = step; t <= 1.0 + step; t+=step)
     {
-        //if (t != 0.0) printf ("t: %lf\n", t);
         double p_t = t-step;
         edges = add_edge (edges,
                 cx + r * cos (2 * M_PI * p_t), cy + r * sin (2 * M_PI * p_t), cz,
