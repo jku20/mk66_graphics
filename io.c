@@ -7,6 +7,24 @@
 #include <fcntl.h>
 
 /*
+ * flips the y coordinates so it is upsidown 
+ * here because I use different x y compared to DW and want to match his specs
+ * this is basically just a hack
+ * returns: void
+*/
+
+static void __h_swap (unsigned char *t1, unsigned char *t2) {unsigned char tmp = *t1; *t1 = *t2, *t2 = tmp;}
+
+void flip_y (const int w, const int h, unsigned char img[h][w][RGB_NUM])
+{
+    int i,j,k;
+    for (i = 0; i < (h+1)/2; i++)
+        for (j = 0; j < w; j++)
+            for (k = 0; k < RGB_NUM; k++)
+                __h_swap (&img[i][j][k], &img[h-i-1][j][k]);
+}
+
+/*
  * writes to ppm file
  * the array should be img[height][width][RGB_NUM]
  * returns: 0 on success else -1

@@ -53,6 +53,13 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
     char buff[MAX_BUFFER_SIZE];
     matrix *tmp;
 
+    double x0,x1,x2,x3,y0,y1,y2,y3,z0,z1;
+    double cx, cy, cz, r;
+    double sx, sy, sz;
+    double tx, ty, tz;
+    char axis;
+    double theta;
+    const unsigned char col[] = {255,255,255}; 
     switch (tok)
     {
         case END:
@@ -62,9 +69,6 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             return e_rix;
             break;
         case LINE:
-            ;
-            double x0, y0, z0, x1, y1, z1;
-
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf %lf %lf %lf", &x0, &y0, &z0, &x1, &y1, &z1);
 
@@ -76,9 +80,6 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             return e_rix;
             break;
         case SCALE:
-            ;
-            double sx, sy, sz;
-
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf", &sx, &sy, &sz);
 
@@ -90,9 +91,6 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             return e_rix;
             break;
         case MOVE:
-            ;
-            double tx, ty, tz;
-
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf", &tx, &ty, &tz);
 
@@ -104,10 +102,6 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             return e_rix;
             break;
         case ROTATE:
-            ;
-            char axis;
-            double theta;
-
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%c %lf", &axis, &theta);
 
@@ -142,39 +136,49 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             return e_rix;
             break;
         case DISPLAY:
-            ;
-            const unsigned char col[] = {255,255,255}; 
-
             clear_screen (w, h, img);
             draw_lines (e_rix, w, h, img, col);
 
+            flip_y (w, h, img);
             display (w, h, img);
+            flip_y (w, h, img);
 
             return e_rix;
             break;
         case SAVE:
-            ;
-
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             buff[strcspn (buff, "\n")] = '\0';
 
+            flip_y (w, h, img);
             save_extension (w, h, img, buff);
+            flip_y (w, h, img);
+
             return e_rix;
             break;
         case CIRCLE:
-            ;
-            double cx, cy, cz, r, stp;
-
             fgets (buff, MAX_BUFFER_SIZE, stdin);
-            sscanf (buff, "%lf %lf %lf %lf %lf", &cx, &cy, &cz, &r, &stp);
+            sscanf (buff, "%lf %lf %lf %lf", &cx, &cy, &cz, &r);
 
-            e_rix = add_circle (e_rix, cx, cy, cz, r, stp);
+            e_rix = add_circle (e_rix, cx, cy, cz, r, STEP_SIZE);
 
             return e_rix;
             break;
         case HERMITE:
+            fgets (buff, MAX_BUFFER_SIZE, stdin);
+            sscanf (buff, "%lf %lf %lf %lf %lf %lf %lf %lf", &x0, &y0, &x1, &y1, &x2, &y2, &x3, &y3);
+            
+            e_rix = add_curve (e_rix,x0,y0,x1,y1,x2,y2,x3,y3,STEP_SIZE,HERMITE_T);
+
+            return e_rix;
             break;
         case BEZIER:
+            fgets (buff, MAX_BUFFER_SIZE, stdin);
+            sscanf (buff, "%lf %lf %lf %lf %lf %lf %lf %lf", &x0, &y0, &x1, &y1, &x2, &y2, &x3, &y3);
+            
+            e_rix = add_curve (e_rix,x0,y0,x1,y1,x2,y2,x3,y3,STEP_SIZE,BEZIER_T);
+
+            return e_rix;
+
             break;
         default:
             return e_rix;

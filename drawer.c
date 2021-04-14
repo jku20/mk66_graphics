@@ -2,6 +2,7 @@
 
 #include "matrix.h"
 
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 
@@ -168,6 +169,58 @@ matrix *add_circle (matrix *edges,
         edges = add_edge (edges,
                 cx + r * cos (2 * M_PI * p_t), cy + r * sin (2 * M_PI * p_t), cz,
                 cx + r * cos (2 * M_PI * t), cy + r * sin (2 * M_PI * t), cz
+                );
+    }
+
+    return edges;
+}
+
+/*
+ * adds a curve based on the specified type, HERMITE or BEZIER
+ * returns: edges matrix
+*/
+
+matrix *add_curve (matrix *edges,
+        const double x0, const double y0,
+        const double x1, const double y1,
+        const double x2, const double y2,
+        const double x3, const double y3,
+        const double step, enum curve_type type)
+{
+    //setting a,b,c,d
+    double ax,bx,cx,dx,ay,by,cy,dy;
+    if (type == HERMITE_T)
+    {
+        ax = 2*x0-2*x1+x2+x3; ay = 2*y0-2*y1+y2+y3;
+        bx = -3*x0+3*x1-2*x2-x3; by = -3*y0+3*y1-2*y2-y3;
+        cx = x2; cy = y2;
+        dx = x0; dy = y0;
+    }
+    else if (type == BEZIER_T)
+    {
+        ax = -x0+3*x1-3*x2+x3; ay = -y0+3*y1-3*y2+y3;
+        bx = 3*x0-6*x1+3*x2; by = 3*y0-6*y1+3*y2;
+        cx = -3*x0+3*x1; cy = -3*y0+3*y1;
+        dx = x0; dy = y0;
+    }
+    else
+    {
+        printf ("something has gone horribly wrong from add_curve\n");
+        return edges;
+    }
+
+    //writing all the edges
+    double t;
+    for (t = step; t <= 1.0 + step; t+=step)
+    {
+        double p_t = t-step;
+        edges = add_edge (edges,
+                ax*p_t*p_t*p_t + bx*p_t*p_t + cx*p_t + dx, 
+                ay*p_t*p_t*p_t + by*p_t*p_t + cy*p_t + dy, 
+                0.0,
+                ax*t*t*t + bx*t*t + cx*t + dx, 
+                ay*t*t*t + by*t*t + cy*t + dy, 
+                0.0
                 );
     }
 

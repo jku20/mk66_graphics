@@ -6,6 +6,7 @@
 #define B 2
 #define RGB_NUM 3
 
+void flip_y (const int w, const int h, unsigned char img[h][w][RGB_NUM]);
 int write_PPM (const int w, const int h, const unsigned char img[h][w][RGB_NUM], const char *out_file);
 void display (const int w, const int h, const unsigned char img[h][w][RGB_NUM]);
 void save_extension (const int w, const int h, const unsigned char img[h][w][RGB_NUM], const char *out_file);
