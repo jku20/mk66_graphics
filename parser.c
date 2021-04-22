@@ -16,8 +16,8 @@
 enum token get_token (void)
 {
     //psudo map, essentually hashing the tokens by a predefined index
-    static const char *tokens[] = {"line", "ident", "scale", "move", "rotate", "apply", "display", "save", "circle", "hermite", "bezier", NULL};
-    static const enum token semantics[] = {LINE, IDENT, SCALE, MOVE, ROTATE, APPLY, DISPLAY, SAVE, CIRCLE, HERMITE, BEZIER};
+    static const char *tokens[] = {"line", "ident", "scale", "move", "rotate", "apply", "display", "save", "circle", "hermite", "bezier", "clear", "box", "sphere", "torus", NULL};
+    static const enum token semantics[] = {LINE, IDENT, SCALE, MOVE, ROTATE, APPLY, DISPLAY, SAVE, CIRCLE, HERMITE, BEZIER, CLEAR, BOX, SPHERE, TORUS};
 
     char buff[MAX_BUFFER_SIZE];
 
@@ -179,6 +179,18 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
 
             return e_rix;
 
+            break;
+
+        //to to implement the bellow
+        case CLEAR:
+            e_rix = free_matrix (e_rix);
+            return mk_matrix (0);
+            break;
+        case BOX:
+            break;
+        case SPHERE:
+            break;
+        case TORUS:
             break;
         default:
             return e_rix;

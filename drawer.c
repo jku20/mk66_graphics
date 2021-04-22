@@ -159,13 +159,14 @@ void draw_line (const int x1a, const int y1a, const int x2a, const int y2a,
 
 matrix *add_circle (matrix *edges, 
         const double cx, const double cy, const double cz,
-        const double r, const double step
+        const double r, const int step
         )
 {
-    double t;
-    for (t = step; t <= 1.0 + step; t+=step)
+    const double chng = 1.0 / step;
+    double t,i;
+    for (t = chng, i = 0; i < step; i++, t += chng)
     {
-        double p_t = t-step;
+        double p_t = t-chng;
         edges = add_edge (edges,
                 cx + r * cos (2 * M_PI * p_t), cy + r * sin (2 * M_PI * p_t), cz,
                 cx + r * cos (2 * M_PI * t), cy + r * sin (2 * M_PI * t), cz
@@ -210,10 +211,11 @@ matrix *add_curve (matrix *edges,
     }
 
     //writing all the edges
-    double t;
-    for (t = step; t <= 1.0 + step; t+=step)
+    const double chng = 1.0 / step;
+    double t,i;
+    for (t = chng, i = 0; i < step; i++, t += chng)
     {
-        double p_t = t-step;
+        double p_t = t-chng;
         edges = add_edge (edges,
                 ax*p_t*p_t*p_t + bx*p_t*p_t + cx*p_t + dx, 
                 ay*p_t*p_t*p_t + by*p_t*p_t + cy*p_t + dy, 
