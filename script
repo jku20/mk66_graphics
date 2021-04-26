@@ -1,88 +1,55 @@
-#test box mesh
-box
-0 0 0 200 100 400
 ident
-rotate
-x 20
-rotate
-y 20
-move
-150 200 0
-apply
-display
-#clear the edge matrix, test the sphere
-clear
 sphere
-0 0 0 200
-display
-#rotate 90 degrees about y to check lines
-ident
+250 250 0 200
+box
+0 250 0 100 10 10
+box
+0 250 0 10 100 10
+box
+50 100 0 500 500 0
+box
+100 100 0 50 100 5
+box
+105 105 0 50 100 5
+box
+110 110 0 50 100 5
+sphere
+314 195 45 20
+sphere
+264 142 34 20
+sphere
+238 347 34 20
+sphere
+186 192 41 20
+sphere
+231 170 91 20
+sphere
+248 154 43 20
+sphere
+258 310 33 20
+sphere
+254 206 39 20
+sphere
+341 223 44 20
+sphere
+195 359 22 20
+sphere
+305 157 60 20
+sphere
+270 188 64 20
+sphere
+276 246 2 20
+sphere
+170 222 51 20
+sphere
+221 329 37 20
+sphere
+321 284 76 20
 rotate
-y 90
-move
-250 250 0
+x 30
+rotate
+y 30
 apply
 display
-#reset sphere, rotate 90 degrees about x to check lines
-ident
-move
--250 -250 0
-rotate
-y -90
-rotate
-x 90
-move
-250 250 0
-apply
-display
-#reset sphere, rotate to make it look cool
-ident
-move
--250 -250 0
-rotate
-x -60
-rotate
-y 20
-rotate
-z 70
-move
-250 250 0
-apply
-display
-#clear the edge matrix, test torus
-clear
-torus
-0 0 0 25 150
-display
-#rotate 90 degrees about y to check lines
-ident
-rotate
-y 90
-move
-250 250 0
-apply
-display
-#reset torus, rotate 90 degrees about x to check lines
-ident
-move
--250 -250 0
-rotate
-y -90
-rotate
-x 90
-move
-250 250 0
-apply
-display
-#reset torus, rotate to make it look cool
-ident
-move
--250 -250 0
-rotate
-x 70
-rotate
-y 20
-move
-250 250 0
-apply
-display
+save
+cool_img.png
