@@ -7,7 +7,7 @@
 //I am going to use bad scanf for now because there is not need to this to be great, it will probably be replaced later
 
 #define MAX_BUFFER_SIZE 128
-#define STEP_SIZE 100
+#define STEP_SIZE 20
 
 //tokens 
 enum token

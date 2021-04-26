@@ -12,6 +12,8 @@ matrix *add_point (matrix *points, const double x, const double y, const double 
 matrix *add_edge (matrix *points,
         const double x0, const double y0, const double z0,
         const double x1, const double y1, const double z1);
+matrix *add_air_quotes_point (matrix *points, const double x, const double y, const double z);
+
 void draw_lines (matrix *points, const int w, const int h, unsigned char img[h][w][3], const unsigned char color[3]);
 
 void plot (const int x, const int y, 

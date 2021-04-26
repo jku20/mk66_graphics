@@ -54,11 +54,12 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
     matrix *tmp;
 
     double x0,x1,x2,x3,y0,y1,y2,y3,z0,z1;
-    double cx, cy, cz, r;
+    double cx, cy, cz, r, r1, r2;
     double sx, sy, sz;
     double tx, ty, tz;
     char axis;
     double theta;
+    double width, height, depth;
     const unsigned char col[] = {255,255,255}; 
     switch (tok)
     {
@@ -187,10 +188,26 @@ matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix,
             return mk_matrix (0);
             break;
         case BOX:
+            fgets (buff, MAX_BUFFER_SIZE, stdin);
+            sscanf (buff, "%lf %lf %lf %lf %lf %lf", &x0, &y0, &z0, &width, &height, &depth);
+            e_rix = add_box (e_rix, x0, y0, z0, width, height, depth);
+
+            return e_rix;
             break;
         case SPHERE:
+            fgets (buff, MAX_BUFFER_SIZE, stdin);
+            sscanf (buff, "%lf %lf %lf %lf", &x0, &y0, &z0, &r);
+
+            e_rix = add_sphere (e_rix, x0, y0, z0, r, STEP_SIZE);
+
+            return e_rix;
             break;
         case TORUS:
+            fgets (buff, MAX_BUFFER_SIZE, stdin);
+            sscanf (buff, "%lf %lf %lf %lf %lf", &x0, &y0, &z0, &r1, &r2);
+
+            e_rix = add_torus (e_rix, x0, y0, z0, r1, r2, STEP_SIZE);
+            return e_rix;
             break;
         default:
             return e_rix;

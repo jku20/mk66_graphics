@@ -6,6 +6,9 @@
 #include <string.h>
 #include <math.h>
 
+//this is about zero and used in add_air_quotes_point
+const static double epsilon = 1.0;
+
 /*
  * adds a point to a given matrix
  * returns: pointer to the matrix
@@ -228,3 +231,150 @@ matrix *add_curve (matrix *edges,
 
     return edges;
 }
+
+/*adds a very small line which apears like a point
+ * returns: edge matrix
+*/
+
+matrix *add_air_quotes_point (matrix *points, const double x, const double y, const double z)
+{
+    return add_edge (points, x, y, z, x+epsilon, y, z);
+}
+
+/*
+ * adds a box to the edge matrix
+ * returns: edge matrix
+*/
+
+matrix *add_box (matrix *edges,
+        const double xa, const double ya, const double za,
+        const double width, const double height, const double depth
+        )
+{
+    double xb,xc,xd,xe,xf,xg,xh;
+    xb = xf = xe = xa;
+    xd = xc = xg = xh = xa + width;
+    double yb,yc,yd,ye,yf,yg,yh;
+    yd = yh = ye = ya;
+    yb = yc = yg = yf = ya - height;
+    double zb,zc,zd,ze,zf,zg,zh;
+    zb = zc = zd = za;
+    ze = zh = zg = zf = za - depth;
+
+    edges = add_edge (edges, xa, ya, za, xb, yb, zb);
+    edges = add_edge (edges, xc, yc, zc, xb, yb, zb);
+    edges = add_edge (edges, xc, yc, zc, xd, yd, zd);
+    edges = add_edge (edges, xa, ya, za, xd, yd, zd);
+    edges = add_edge (edges, xe, ye, ze, xf, yf, zf);
+    edges = add_edge (edges, xg, yg, zg, xf, yf, zf);
+    edges = add_edge (edges, xg, yg, zg, xh, yh, zh);
+    edges = add_edge (edges, xe, ye, ze, xh, yh, zh);
+    edges = add_edge (edges, xe, ye, ze, xa, ya, za);
+    edges = add_edge (edges, xd, yd, zd, xh, yh, zh);
+    edges = add_edge (edges, xb, yb, zb, xf, yf, zf);
+    edges = add_edge (edges, xc, yc, zc, xg, yg, zg);
+
+    return edges;
+}
+
+/*
+ * helper function, returns the wanted points on a sphere
+ * returns: matrix of very short lines representing points
+*/
+
+matrix *generate_sphere (
+        const double cx, const double cy, const double cz,
+        const double r, const int step
+        )
+{
+    matrix *out = mk_matrix (0);
+
+    const double chng = 1.0 / step;
+    double t,i,u,j;
+    for (t = 0, i = 0; i < step; i++, t += chng)
+        for (u = 0, j = 0; j < step; j++, u += chng) 
+            out = add_air_quotes_point (out, 
+                    r * cos (M_PI * t) + cx,
+                    r * sin (M_PI * t) * cos (2 * M_PI * u) + cy,
+                    r * sin (M_PI * t) * sin (2 * M_PI * u) + cz
+                    );
+    return out;
+}
+
+/*
+ * adds a sphere to the edge matrix
+ * returns: edge matrix
+*/
+
+matrix *add_sphere (matrix *edges,
+        const double cx, const double cy, const double cz,
+        const double r, const int step
+        )
+{
+    matrix *helper = generate_sphere (cx, cy, cz, r, step);
+    int i;
+    for (i = 1; i < helper->w; i+=2)
+    {
+        edges = add_edge (edges, 
+                helper->mtrx[i-1][0], helper->mtrx[i-1][1], helper->mtrx[i-1][2],
+                helper->mtrx[i][0], helper->mtrx[i][1], helper->mtrx[i][2]
+                );
+    }
+
+    free_matrix (helper); helper = NULL;
+
+    return edges;
+}
+
+/*
+ * helper function, returns the wanted points on a torus
+ * returns: matrix of very short lines representing points
+*/
+
+
+matrix *generate_torus (
+        const double cx, const double cy, const double cz,
+        const double r1, const double r2, const int step
+        )
+{
+    matrix *out = mk_matrix (0);
+
+    const double chng = 1.0 / step;
+    double t,i,u,j;
+    for (t = 0, i = 0; i < step; i++, t += chng)
+        for (u = 0, j = 0; j < step; j++, u += chng) 
+            out = add_air_quotes_point (out, 
+                    cos (2 * M_PI * u) * (r1 * cos (2 * M_PI * t) + r2) + cx,
+                    r1 * sin (2 * M_PI * t) + cy,
+                    -sin (2 * M_PI * u) * (r1 * cos (2 * M_PI * t) + r2) + cz
+                    );
+    return out;
+
+
+}
+
+/*
+ * adds a torus to the edge matrix
+ * returns: edge matrix
+*/
+
+matrix *add_torus (matrix *edges,
+        const double cx, const double cy, const double cz,
+        const double r1, const double r2, const int step
+        )
+{
+    matrix *helper = generate_torus (cx, cy, cz, r1, r2, step);
+    int i;
+    for (i = 1; i < helper->w; i+=2)
+    {
+        edges = add_edge (edges, 
+                helper->mtrx[i-1][0], helper->mtrx[i-1][1], helper->mtrx[i-1][2],
+                helper->mtrx[i][0], helper->mtrx[i][1], helper->mtrx[i][2]
+                );
+    }
+
+    free_matrix (helper); helper = NULL;
+
+    return edges;
+}
+
