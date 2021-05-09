@@ -2,8 +2,8 @@ ARGS = -lm -Wall -pedantic
 CC = gcc $(ARGS)
 CMPNTS = main.o io.o drawer.o matrix.o parser.o
 
-all: main mk_s gen run
-#all: main run
+#all: main mk_s gen run
+all: main run
 
 main: $(CMPNTS)
 	$(CC) -o main $(CMPNTS) $(ARGS)

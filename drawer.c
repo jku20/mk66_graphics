@@ -278,11 +278,11 @@ matrix *add_air_quotes_point (matrix *points, const double x, const double y, co
 }
 
 /*
- * adds a box to the edge matrix
- * returns: edge matrix
+ * adds a box to the poly matrix
+ * returns: poly matrix
 */
 
-matrix *add_box (matrix *edges,
+matrix *add_box (matrix *polys,
         const double xa, const double ya, const double za,
         const double width, const double height, const double depth
         )
@@ -297,20 +297,68 @@ matrix *add_box (matrix *edges,
     zb = zc = zd = za;
     ze = zh = zg = zf = za - depth;
 
-    edges = add_edge (edges, xa, ya, za, xb, yb, zb);
-    edges = add_edge (edges, xc, yc, zc, xb, yb, zb);
-    edges = add_edge (edges, xc, yc, zc, xd, yd, zd);
-    edges = add_edge (edges, xa, ya, za, xd, yd, zd);
-    edges = add_edge (edges, xe, ye, ze, xf, yf, zf);
-    edges = add_edge (edges, xg, yg, zg, xf, yf, zf);
-    edges = add_edge (edges, xg, yg, zg, xh, yh, zh);
-    edges = add_edge (edges, xe, ye, ze, xh, yh, zh);
-    edges = add_edge (edges, xe, ye, ze, xa, ya, za);
-    edges = add_edge (edges, xd, yd, zd, xh, yh, zh);
-    edges = add_edge (edges, xb, yb, zb, xf, yf, zf);
-    edges = add_edge (edges, xc, yc, zc, xg, yg, zg);
+    polys = add_polygon (polys,
+        xa,ya,za,
+        xh,yh,zh,
+        xe,ye,ze
+    );
+    polys = add_polygon (polys,
+        xa,ya,za,
+        xd,yd,zd,
+        xh,yh,zh
+    );
+    polys = add_polygon (polys,
+        xa,ya,za,
+        xb,yb,zb,
+        xd,yd,zd
+    );
+    polys = add_polygon (polys,
+        xb,yb,zb,
+        xc,yc,zc,
+        xd,yd,zd
+    );
+    polys = add_polygon (polys,
+        xb,yb,zb,
+        xf,yf,zf,
+        xc,yc,zc
+    );
+    polys = add_polygon (polys,
+        xf,yf,zf,
+        xg,yg,zg,
+        xc,yc,zc
+    );
+    polys = add_polygon (polys,
+        xf,yf,zf,
+        xe,ye,ze,
+        xg,yg,zg
+    );
+    polys = add_polygon (polys,
+        xe,ye,ze,
+        xh,yh,zh,
+        xg,yg,zg
+    );
+    polys = add_polygon (polys,
+        xd,yd,zd,
+        xc,yc,zc,
+        xh,yh,zh
+    );
+    polys = add_polygon (polys,
+        xc,yc,zc,
+        xg,yg,zg,
+        xh,yh,zh
+    );
+    polys = add_polygon (polys,
+        xe,ye,ze,
+        xf,yf,zf,
+        xa,ya,za
+    );
+    polys = add_polygon (polys,
+        xf,yf,zf,
+        xb,yb,zb,
+        xa,ya,za
+    );
 
-    return edges;
+    return polys;
 }
 
 /*
