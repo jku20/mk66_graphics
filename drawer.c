@@ -45,6 +45,23 @@ matrix *add_edge (matrix *points,
 }
 
 /*
+ * adds polygon (triangle) to a given matrix
+ * returns: pointer to the matrix
+*/
+
+matrix *add_polygon (matrix *points,
+        const double x0, const double y0, const double z0,
+        const double x1, const double y1, const double z1,
+        const double x2, const double y2, const double z2)
+{
+    points = add_point (points, x0, y0, z0);
+    points = add_point (points, x1, y1, z1);
+    points = add_point (points, x2, y2, z2);
+
+    return points;
+}
+
+/*
  * draws lines to a given img array assumes matrix has even amount of 
  * returns: void
 */
@@ -61,6 +78,25 @@ void draw_lines (matrix *points, const int w, const int h, unsigned char img[h][
     }
 }
 
+/*
+ * draws lines to a given img array assumes matrix has even amount of 
+ * returns: void
+*/
+
+void draw_polygons (matrix *points, const int w, const int h, unsigned char img[h][w][3], const unsigned char color[3])
+{
+    const int size = points->w;
+    int i;
+    for (i = 2; i < size; i+=3) 
+    {
+        const int x0 = (int) points->mtrx[i][0], x1 = (int) points->mtrx[i-1][0], x2 = (int) points->mtrx[i-2][0];
+        const int y0 = (int) points->mtrx[i][1], y1 = (int) points->mtrx[i-1][1], y2 = (int) points->mtrx[i-2][1];
+
+        draw_line (x0, y0, x1, y1, w, h, img, color);
+        draw_line (x0, y0, x2, y2, w, h, img, color);
+        draw_line (x1, y1, x2, y2, w, h, img, color);
+    }
+}
 
 /*
  * plots a color, make sure to check the number is in bounds

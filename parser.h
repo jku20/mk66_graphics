@@ -29,8 +29,9 @@ enum token
     SPHERE,
     TORUS,
 
-    CLEAR,
     APPLY,
+
+    CLEAR,
     DISPLAY,
     SAVE,
 
@@ -38,7 +39,9 @@ enum token
 };
 
 enum token get_token (void);
-matrix *parse_token (const enum token tok, matrix *t_rix, matrix *e_rix, 
+matrix *parse_token_2d (const enum token tok, matrix *t_rix, matrix *e_rix);
+matrix *parse_token_3d (const enum token tok, matrix *t_rix, matrix *p_rix);
+void parse_token_meta (const enum token tok, 
+        matrix *t_rix, matrix *e_rix, matrix *p_rix,
         const int w, const int h, unsigned char img[h][w][RGB_NUM]);
-
 #endif

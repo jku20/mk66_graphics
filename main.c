@@ -18,14 +18,20 @@ int main()
     const clock_t start = clock ();
 
     matrix *e_list = mk_matrix (0);
+    matrix *p_list = mk_matrix (0);
     matrix *t_rix = mk_matrix (4); //I am sorry, the pun is just too good
 
     enum token tok;
     while ((tok = get_token()))
-        e_list = parse_token (tok, t_rix, e_list, W, H, img);
+    {
+        e_list = parse_token_2d (tok, t_rix, e_list);
+        p_list = parse_token_3d (tok, t_rix, p_list);
+        parse_token_meta (tok, t_rix, e_list, p_list, W, H, img);
+    }
 
     free_matrix (t_rix); t_rix = NULL;
     free_matrix (e_list); e_list = NULL;
+    free_matrix (p_list); p_list = NULL;
 
     const clock_t end = clock ();
     printf ("\ntime: %lfsec\n", (double)(end - start)/CLOCKS_PER_SEC);

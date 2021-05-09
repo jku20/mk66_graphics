@@ -16,6 +16,14 @@ matrix *add_air_quotes_point (matrix *points, const double x, const double y, co
 
 void draw_lines (matrix *points, const int w, const int h, unsigned char img[h][w][3], const unsigned char color[3]);
 
+matrix *add_polygon (matrix *polys,
+        const double x0, const double y0, const double z0,
+        const double x1, const double y1, const double z1,
+        const double x2, const double y2, const double z2);
+
+void draw_polygons (matrix *polys, const int w, const int h, unsigned char img[h][w][3], const unsigned char color[3]);
+
+
 void plot (const int x, const int y, 
         const int w, const int h, unsigned char img[h][w][3], const unsigned char color[3]);
 void draw_line (const int x1a, const int y1a, const int x2a, const int y2a,
@@ -35,6 +43,7 @@ matrix *add_curve (matrix *edges,
         const double step, enum curve_type type
         );
 
+//TODO make these 3d shapes work as wanted
 matrix *add_box (matrix *edges,
         const double x, const double y, const double z,
         const double width, const double height, const double depth
