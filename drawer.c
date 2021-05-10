@@ -1,6 +1,7 @@
 #include "drawer.h"
 
 #include "matrix.h"
+#include "gmath.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -24,7 +25,7 @@ matrix *add_point(matrix *points, const double x, const double y, const double z
     points->mtrx[ind][1] = y;
     points->mtrx[ind][2] = z;
     points->mtrx[ind][3] = 1.0;
-
+    
     return points;
 }
 
@@ -92,9 +93,17 @@ void draw_polygons (matrix *points, const int w, const int h, unsigned char img[
         const int x0 = (int) points->mtrx[i][0], x1 = (int) points->mtrx[i-1][0], x2 = (int) points->mtrx[i-2][0];
         const int y0 = (int) points->mtrx[i][1], y1 = (int) points->mtrx[i-1][1], y2 = (int) points->mtrx[i-2][1];
 
-        draw_line (x0, y0, x1, y1, w, h, img, color);
-        draw_line (x0, y0, x2, y2, w, h, img, color);
-        draw_line (x1, y1, x2, y2, w, h, img, color);
+        //do I draw the thing?
+        double norm[] = {0.0,0.0,0.0};
+        calculate_normal (points, i-2, norm);
+        const double v[] = {0.0,0.0,1.0};
+
+        if (0.0 < dot_product (norm, v)) 
+        {
+            draw_line (x0, y0, x1, y1, w, h, img, color);
+            draw_line (x0, y0, x2, y2, w, h, img, color);
+            draw_line (x1, y1, x2, y2, w, h, img, color);
+        }
     }
 }
 
@@ -373,15 +382,18 @@ matrix *generate_sphere (
 {
     matrix *out = mk_matrix (0);
 
-    const double chng = 1.0 / step;
-    double t,i,u,j;
-    for (t = 0, i = 0; i < step; i++, t += chng)
-        for (u = 0, j = 0; j < step; j++, u += chng) 
-            out = add_air_quotes_point (out, 
-                    r * cos (M_PI * t) + cx,
-                    r * sin (M_PI * t) * cos (2 * M_PI * u) + cy,
-                    r * sin (M_PI * t) * sin (2 * M_PI * u) + cz
+    const double tchng = M_PI / (step-1);
+    const double uchng = (2 * M_PI) / (step);
+    double t,u; int i,j;
+    for (u = 0, j = 0; j < step; j++, u += uchng) 
+        for (t = 0, i = 0; i < step; i++, t += tchng)
+            out = add_point (out, 
+                    r * cos (t) + cx,
+                    r * sin (t) * cos (u) + cy,
+                    r * sin (t) * sin (u) + cz
                     );
+
+
     return out;
 }
 
@@ -397,12 +409,32 @@ matrix *add_sphere (matrix *edges,
 {
     matrix *helper = generate_sphere (cx, cy, cz, r, step);
     int i;
-    for (i = 1; i < helper->w; i+=2)
+    for (i = 0; i < helper->w; i++)
     {
-        edges = add_edge (edges, 
-                helper->mtrx[i-1][0], helper->mtrx[i-1][1], helper->mtrx[i-1][2],
-                helper->mtrx[i][0], helper->mtrx[i][1], helper->mtrx[i][2]
-                );
+        if (i % step == step-1) continue;
+
+        const int p0 = (i) % (helper->w);
+        const int p1 = (i+1) % (helper->w);
+        const int p2 = (i+1+step) % (helper->w);
+        const int p3 = (i+step) % (helper->w);
+
+        if (i % step != step-2)
+        {
+            edges = add_polygon (edges,
+                    helper->mtrx[p0][0], helper->mtrx[p0][1], helper->mtrx[p0][2],
+                    helper->mtrx[p1][0], helper->mtrx[p1][1], helper->mtrx[p1][2],
+                    helper->mtrx[p2][0], helper->mtrx[p2][1], helper->mtrx[p2][2]
+                    );
+        }
+        if (i % step != 0)
+        {
+            edges = add_polygon (edges,
+                    helper->mtrx[p0][0], helper->mtrx[p0][1], helper->mtrx[p0][2],
+                    helper->mtrx[p2][0], helper->mtrx[p2][1], helper->mtrx[p2][2],
+                    helper->mtrx[p3][0], helper->mtrx[p3][1], helper->mtrx[p3][2]
+                    );
+
+        }
     }
 
     free_matrix (helper); helper = NULL;
@@ -423,18 +455,17 @@ matrix *generate_torus (
 {
     matrix *out = mk_matrix (0);
 
-    const double chng = 1.0 / step;
-    double t,i,u,j;
-    for (t = 0, i = 0; i < step; i++, t += chng)
-        for (u = 0, j = 0; j < step; j++, u += chng) 
-            out = add_air_quotes_point (out, 
-                    cos (2 * M_PI * u) * (r1 * cos (2 * M_PI * t) + r2) + cx,
-                    r1 * sin (2 * M_PI * t) + cy,
-                    -sin (2 * M_PI * u) * (r1 * cos (2 * M_PI * t) + r2) + cz
+    const double chng = 2 * M_PI / step;
+    int i,j;
+    double t,u;
+    for (u = 0, j = 0; j < step; j++, u += chng) 
+        for (t = 0, i = 0; i < step; i++, t += chng)
+            out = add_point (out, 
+                    cos (u) * (r1 * cos (t) + r2) + cx,
+                    r1 * sin (t) + cy,
+                    -sin (u) * (r1 * cos (t) + r2) + cz
                     );
     return out;
-
-
 }
 
 /*
@@ -448,13 +479,36 @@ matrix *add_torus (matrix *edges,
         )
 {
     matrix *helper = generate_torus (cx, cy, cz, r1, r2, step);
+
     int i;
-    for (i = 1; i < helper->w; i+=2)
+    for (i = 0; i < helper->w; i++)
     {
-        edges = add_edge (edges, 
-                helper->mtrx[i-1][0], helper->mtrx[i-1][1], helper->mtrx[i-1][2],
-                helper->mtrx[i][0], helper->mtrx[i][1], helper->mtrx[i][2]
-                );
+        int p0,p1,p2,p3;
+        if (i % step == step-1) 
+        {
+            p0 = (i) % (helper->w);
+            p1 = (i-step+1) % (helper->w);
+            p2 = (i+1) % (helper->w);
+            p3 = (i+step) % (helper->w);
+        }
+        else 
+        {
+            p0 = (i) % (helper->w);
+            p1 = (i+1) % (helper->w);
+            p2 = (i+1+step) % (helper->w);
+            p3 = (i+step) % (helper->w);
+
+        }
+        edges = add_polygon (edges,
+            helper->mtrx[p0][0], helper->mtrx[p0][1], helper->mtrx[p0][2],
+            helper->mtrx[p1][0], helper->mtrx[p1][1], helper->mtrx[p1][2],
+            helper->mtrx[p2][0], helper->mtrx[p2][1], helper->mtrx[p2][2]
+        );
+        edges = add_polygon (edges,
+            helper->mtrx[p0][0], helper->mtrx[p0][1], helper->mtrx[p0][2],
+            helper->mtrx[p2][0], helper->mtrx[p2][1], helper->mtrx[p2][2],
+            helper->mtrx[p3][0], helper->mtrx[p3][1], helper->mtrx[p3][2]
+        );
     }
 
     free_matrix (helper); helper = NULL;

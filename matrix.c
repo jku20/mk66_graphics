@@ -20,7 +20,7 @@ matrix *mk_matrix (const int w)
 
     matrix *m = calloc (1,sizeof (matrix) + sizeof (mxtype[ws][MAX_MATRIX_HEIGHT]));
 
-    m->w = w; m->w_size = ws;
+    m->w = w, m->w_size = ws;
 
     return m;
 }
