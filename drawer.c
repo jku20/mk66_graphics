@@ -382,17 +382,44 @@ matrix *generate_sphere (
 {
     matrix *out = mk_matrix (0);
 
-    const double tchng = M_PI / (step-1);
-    const double uchng = (2 * M_PI) / (step);
-    double t,u; int i,j;
-    for (u = 0, j = 0; j < step; j++, u += uchng) 
-        for (t = 0, i = 0; i < step; i++, t += tchng)
+    const double tchng = 1.0 / (step-1);
+    const double uchng = 1.0 / (step);
+
+    //dw code testing
+    double rot_start = 0;
+    double rot_stop = step;
+    double circ_start = 0;
+    double circ_stop = step;
+
+    for (int rotation = rot_start; rotation < rot_stop; rotation++) {
+        double u = (double)rotation / step;
+        for(int circle = circ_start; circle <= circ_stop; circle++) {
+            double t = (double)circle / step;
+            out = add_point (out, 
+                r * cos (M_PI * t) + cx,
+                r * sin (M_PI * t) * cos (2.0 * M_PI * u) + cy,
+                r * sin (M_PI * t) * sin (2.0 * M_PI * u) + cz
+                );
+        }
+    }
+
+
+
+    //end dw code
+    /*
+    long double t,u; int i,j;
+    for (u = 0, j = 0; j < step; j++)//, u += uchng) 
+        for (t = 0, i = 0; i < step; i++)// t += tchng)
+        {
+            t = M_PI * (double) i / (step-1);
+            u = 2.0 * M_PI * (double) j / step;
             out = add_point (out, 
                     r * cos (t) + cx,
                     r * sin (t) * cos (u) + cy,
                     r * sin (t) * sin (u) + cz
                     );
-
+        }
+        */
 
     return out;
 }
@@ -411,14 +438,14 @@ matrix *add_sphere (matrix *edges,
     int i;
     for (i = 0; i < helper->w; i++)
     {
-        if (i % step == step-1) continue;
+        //if (i % step == step-1) continue;
 
         const int p0 = (i) % (helper->w);
         const int p1 = (i+1) % (helper->w);
         const int p2 = (i+1+step) % (helper->w);
         const int p3 = (i+step) % (helper->w);
 
-        if (i % step != step-2)
+        if (i % step != step-1)
         {
             edges = add_polygon (edges,
                     helper->mtrx[p0][0], helper->mtrx[p0][1], helper->mtrx[p0][2],
