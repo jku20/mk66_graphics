@@ -307,14 +307,14 @@ matrix *add_box (matrix *polys,
     ze = zh = zg = zf = za - depth;
 
     polys = add_polygon (polys,
-        xa,ya,za,
-        xh,yh,zh,
-        xe,ye,ze
+        xe,ye,ze,
+        xd,yd,zd,
+        xh,yh,zh
     );
     polys = add_polygon (polys,
         xa,ya,za,
         xd,yd,zd,
-        xh,yh,zh
+        xe,ye,ze
     );
     polys = add_polygon (polys,
         xa,ya,za,
@@ -385,28 +385,6 @@ matrix *generate_sphere (
     const double tchng = 1.0 / (step-1);
     const double uchng = 1.0 / (step);
 
-    //dw code testing
-    double rot_start = 0;
-    double rot_stop = step;
-    double circ_start = 0;
-    double circ_stop = step;
-
-    for (int rotation = rot_start; rotation < rot_stop; rotation++) {
-        double u = (double)rotation / step;
-        for(int circle = circ_start; circle <= circ_stop; circle++) {
-            double t = (double)circle / step;
-            out = add_point (out, 
-                r * cos (M_PI * t) + cx,
-                r * sin (M_PI * t) * cos (2.0 * M_PI * u) + cy,
-                r * sin (M_PI * t) * sin (2.0 * M_PI * u) + cz
-                );
-        }
-    }
-
-
-
-    //end dw code
-    /*
     long double t,u; int i,j;
     for (u = 0, j = 0; j < step; j++)//, u += uchng) 
         for (t = 0, i = 0; i < step; i++)// t += tchng)
@@ -419,7 +397,6 @@ matrix *generate_sphere (
                     r * sin (t) * sin (u) + cz
                     );
         }
-        */
 
     return out;
 }
