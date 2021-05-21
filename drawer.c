@@ -382,22 +382,45 @@ matrix *generate_sphere (
 {
     matrix *out = mk_matrix (0);
 
-    const double tchng = 1.0 / (step-1);
-    const double uchng = 1.0 / (step);
+    /*
+    const double tchng = M_PI / (step);
+    const double uchng = 2 * M_PI / (step);
 
-    long double t,u; int i,j;
-    for (u = 0, j = 0; j < step; j++)//, u += uchng) 
-        for (t = 0, i = 0; i < step; i++)// t += tchng)
+    double t,u; int i,j;
+    for (u = 0, j = 0; j < step; j++, u += uchng) 
+        for (t = 0, i = 0; i <= step; i++, t += tchng)
         {
-            t = M_PI * (double) i / (step-1);
-            u = 2.0 * M_PI * (double) j / step;
             out = add_point (out, 
                     r * cos (t) + cx,
                     r * sin (t) * cos (u) + cy,
                     r * sin (t) * sin (u) + cz
                     );
         }
+    */
+    //DW CODE
+    int circle, rotation, rot_start, rot_stop, circ_start, circ_stop;
+    double x,y,z,rot,circ;
 
+    rot_start = 0;
+    rot_stop = step;
+    circ_start = 0;
+    circ_stop = step;
+    for (rotation = rot_start; rotation < rot_stop; rotation++)
+    {
+        rot = (double) rotation / step;
+        for (circle = circ_start; circle <= circ_stop; circle++)
+        {
+            circ = (double) circle / step;
+
+            x = r * cos(M_PI * circ) + cx;
+            y = r * sin(M_PI * circ) * cos(2*M_PI * rot) + cy;
+            z = r * sin(M_PI * circ) * sin(2*M_PI * rot) + cz;
+            /* printf("rotation: %d\tcircle: %d\n", rotation, circle); */
+            /* printf("rot: %lf\tcirc: %lf\n", rot, circ); */
+            /* printf("sphere point: (%0.2f, %0.2f, %0.2f)\n\n", x, y, z); */
+            out = add_point(out, x, y, z);
+        }
+    }
     return out;
 }
 
@@ -412,32 +435,26 @@ matrix *add_sphere (matrix *edges,
         )
 {
     matrix *helper = generate_sphere (cx, cy, cz, r, step);
-    int i;
-    for (i = 0; i < helper->w; i++)
+    int i,j;
+    for (i = 0; i < step; i++)
     {
-        //if (i % step == step-1) continue;
-
-        const int p0 = (i) % (helper->w);
-        const int p1 = (i+1) % (helper->w);
-        const int p2 = (i+1+step) % (helper->w);
-        const int p3 = (i+step) % (helper->w);
-
-        if (i % step != step-1)
+        for (j = 1; j < step; j++)
         {
+            const int p0 = i * (step+1) + j;
+            const int p1 = p0 + 1;
+            const int p2 = (p1 + step) % (step * (step+1));
+            const int p3 = (p0 + step) % (step * (step+1));
+
             edges = add_polygon (edges,
                     helper->mtrx[p0][0], helper->mtrx[p0][1], helper->mtrx[p0][2],
                     helper->mtrx[p1][0], helper->mtrx[p1][1], helper->mtrx[p1][2],
                     helper->mtrx[p2][0], helper->mtrx[p2][1], helper->mtrx[p2][2]
                     );
-        }
-        if (i % step != 0)
-        {
             edges = add_polygon (edges,
                     helper->mtrx[p0][0], helper->mtrx[p0][1], helper->mtrx[p0][2],
                     helper->mtrx[p2][0], helper->mtrx[p2][1], helper->mtrx[p2][2],
                     helper->mtrx[p3][0], helper->mtrx[p3][1], helper->mtrx[p3][2]
                     );
-
         }
     }
 
