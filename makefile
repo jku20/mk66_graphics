@@ -1,6 +1,6 @@
-ARGS = -lm -Wall -pedantic
+ARGS = -lm -Wall -pedantic #-g
 CC = gcc $(ARGS)
-CMPNTS = main.o io.o drawer.o matrix.o parser.o gmath.o
+CMPNTS = main.o io.o drawer.o matrix.o parser.o gmath.o stack.o
 
 #all: main mk_s gen run
 all: main run
@@ -21,6 +21,7 @@ drawer.o: drawer.c drawer.h
 matrix.o: matrix.c matrix.h
 parser.o: parser.c parser.h
 gmath.o: gmath.h gmath.c matrix.h
+stack.o: stack.c stack.h matrix.h
 
 .PHONY: all run clean gen
 

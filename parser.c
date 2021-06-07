@@ -17,8 +17,8 @@
 enum token get_token (void)
 {
     //psudo map, essentually hashing the tokens by a predefined index
-    static const char *tokens[] = {"line", "ident", "scale", "move", "rotate", "apply", "display", "save", "circle", "hermite", "bezier", "clear", "box", "sphere", "torus", "push", "pop", NULL};
-    static const enum token semantics[] = {LINE, IDENT, SCALE, MOVE, ROTATE, APPLY, DISPLAY, SAVE, CIRCLE, HERMITE, BEZIER, CLEAR, BOX, SPHERE, TORUS, PUSH, POP};
+    static const char *tokens[] = {"line", "scale", "move", "rotate", "display", "save", "circle", "hermite", "bezier", "box", "sphere", "torus", "push", "pop", NULL};
+    static const enum token semantics[] = {LINE, SCALE, MOVE, ROTATE, DISPLAY, SAVE, CIRCLE, HERMITE, BEZIER, BOX, SPHERE, TORUS, PUSH, POP};
 
     char buff[MAX_BUFFER_SIZE];
 
@@ -43,13 +43,13 @@ enum token get_token (void)
 
 /*
  * takes a token and processes it (possibly reading from stdin itself)
- * t_rix is the transformation matrix (I couldn't help myself)
- * e_rix is the edge matrix
- * p_rix is the polygon (triangle) matrix
- * returns: pointer to e_rix
+ * 3 different versions each with their own slightly different functions
+ * returns: void
 */
 
-matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_rix)
+void parse_token_2d (const enum token tok, 
+        stack *transform_stack, const unsigned char col[3],
+        const int w, const int h, unsigned char img[h][w][RGB_NUM])
 {
     char buff[MAX_BUFFER_SIZE];
 
@@ -60,10 +60,10 @@ matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_
     switch (tok)
     {
         case END:
-            return e_rix;
+            return;
             break;
         case INVALID:
-            return e_rix;
+            return;
             break;
         case LINE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -75,7 +75,7 @@ matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_
             draw_lines (edges, w, h, img, col);
             free_matrix (edges), edges = NULL;
 
-            return NULL;
+            return;
             break;
         case CIRCLE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -87,7 +87,7 @@ matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_
             draw_lines (edges, w, h, img, col);
             free_matrix (edges), edges = NULL;
 
-            return NULL;
+            return;
             break;
         case HERMITE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -99,7 +99,7 @@ matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_
             draw_lines (edges, w, h, img, col);
             free_matrix (edges), edges = NULL;
 
-            return NULL;
+            return;
             break;
         case BEZIER:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -111,24 +111,22 @@ matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_
             draw_lines (edges, w, h, img, col);
             free_matrix (edges), edges = NULL;
 
-            return NULL;
+            return;
             break;
 
-        case CLEAR:
-            e_rix = free_matrix (e_rix);
-            return mk_matrix (0);
-            break;
         default:
-            return e_rix;
+            return;
             break;
     }
 
     //really shouldn't ever get here but eh, just to be safe
     printf ("something has gone horribly wrong from parse_token_2d\n");
-    return e_rix;
+    return;
 }
 
-matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_rix) 
+void parse_token_3d (const enum token tok, 
+        stack *transform_stack, const unsigned char col[3],
+        const int w, const int h, unsigned char img[h][w][RGB_NUM])
 {
     char buff[MAX_BUFFER_SIZE];
 
@@ -136,18 +134,14 @@ matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_
     double r, r1, r2;
     double width, height, depth;
 
-    matrix *polygons = mk_matrix (0):
+    matrix *polygons = mk_matrix (0);
     switch (tok)
     {
         case END:
-            return p_rix;
+            return;
             break;
         case INVALID:
-            return p_rix;
-            break;
-        case CLEAR:
-            p_rix = free_matrix (p_rix);
-            return mk_matrix (0);
+            return;
             break;
         case BOX:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -159,7 +153,7 @@ matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_
             draw_polygons (polygons, w, h, img, col);
             free_matrix (polygons), polygons = NULL;
 
-            return NULL;
+            return;
             break;
         case SPHERE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -171,7 +165,7 @@ matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_
             draw_polygons (polygons, w, h, img, col);
             free_matrix (polygons), polygons = NULL;
 
-            return NULL;
+            return;
             break;
         case TORUS:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -183,20 +177,20 @@ matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_
             draw_polygons (polygons, w, h, img, col);
             free_matrix (polygons), polygons = NULL;
 
-            return NULL;
+            return;
             break;
         default:
-            return p_rix;
+            return;
             break;
     }
 
     //really shouldn't ever get here but eh, just to be safe
     printf ("something has gone horribly wrong from parse_token_3d\n");
-    return p_rix;
+    return;
 }
 
 void parse_token_meta (const enum token tok, 
-        stack *transform_stack, matrix *e_rix, matrix *p_rix,
+        stack *transform_stack, const unsigned char col[3],
         const int w, const int h, unsigned char img[h][w][RGB_NUM]) 
 {
     char buff[MAX_BUFFER_SIZE];
@@ -206,7 +200,6 @@ void parse_token_meta (const enum token tok,
     double tx, ty, tz;
     char axis;
     double theta;
-    const unsigned char col[] = {255,255,255}; 
     switch (tok)
     {
         case END:
@@ -218,9 +211,6 @@ void parse_token_meta (const enum token tok,
             break;
         case POP:
             pop (transform_stack);
-            break;
-        case IDENT:
-            ident (t_rix);
             break;
         case SCALE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -238,7 +228,7 @@ void parse_token_meta (const enum token tok,
             sscanf (buff, "%lf %lf %lf", &tx, &ty, &tz);
 
             tmp = mk_translate (tx, ty, tz);
-            matrix_mult (peek (transform_stack, tmp));
+            matrix_mult (peek (transform_stack), tmp);
             cpy_matrix (tmp, peek (transform_stack));
 
             free_matrix (tmp), tmp = NULL;
@@ -270,10 +260,6 @@ void parse_token_meta (const enum token tok,
             cpy_matrix (tmp, peek (transform_stack));
 
             free_matrix (tmp), tmp = NULL;
-            break;
-        case APPLY:
-            matrix_mult (t_rix, e_rix);
-            matrix_mult (t_rix, p_rix);
             break;
         case DISPLAY:
             flip_y (w, h, img);

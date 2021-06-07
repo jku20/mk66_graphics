@@ -33,6 +33,7 @@ matrix *mk_matrix (const int w)
 void cpy_matrix (const matrix *src, matrix *dest)
 {
     memcpy (dest->mtrx, src->mtrx, sizeof (mxtype) * src->w * MAX_MATRIX_HEIGHT);
+    //memcpy (dest->mtrx, src->mtrx, sizeof (matrix) + sizeof (mxtype[src->w_size][MAX_MATRIX_HEIGHT]));
 }
 
 /*
@@ -49,7 +50,15 @@ matrix *grow_matrix (matrix *mtrx, const int newcols)
         int nsize = mtrx->w_size;
         while (nsize < mtrx->w) nsize <<= 1;
         mtrx->w_size = nsize;
+        /*
+        matrix *tmp = mk_matrix (nsize);
+        cpy_matrix (mtrx, tmp);
+        tmp->w = mtrx->w;
+        tmp->w_size = mtrx->w_size;
+        free (mtrx); mtrx = NULL;
 
+        return tmp;
+        */
         return realloc (mtrx, sizeof (matrix) + sizeof (mxtype[nsize][MAX_MATRIX_HEIGHT]));
     }
     return mtrx;
@@ -111,7 +120,7 @@ void print_matrix (const matrix *mtrx)
     {
         for (j = 0; j < w; j++) 
         {
-            printf ("%lf ", mtrx->mtrx[j][i]);
+            printf ("%0.2lf ", mtrx->mtrx[j][i]);
         }
         printf ("\n");
     }
@@ -226,6 +235,29 @@ matrix *mk_rot_zaxis (const double theta)
  * demensions of b are the same as the resultant and multiplies them placing
  * the result in b
  * returns: void
+*/
+
+//DEBUG
+/*
+void matrix_mult (const matrix *a, matrix *b) 
+{
+    int r,c;
+    double tmp[4];
+    memset (tmp, 0, sizeof tmp);
+
+    for (c = 0; c < b->w; c++)
+    {
+        for (r = 0; r < 4; r++) tmp[r] = b->mtrx[c][r];
+        for (r = 0; r < 4; r++)
+        {
+            b->mtrx[c][r] = 
+                a->mtrx[0][r] * tmp[0] + 
+                a->mtrx[1][r] * tmp[1] +
+                a->mtrx[2][r] * tmp[2] +
+                a->mtrx[3][r] * tmp[3];
+        }
+    }
+}
 */
 
 void matrix_mult (const matrix *a, matrix *b) 

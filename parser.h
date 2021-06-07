@@ -3,6 +3,7 @@
 
 #include "matrix.h"
 #include "io.h"
+#include "stack.h"
 
 //I am going to use bad scanf for now because there is not need to this to be great, it will probably be replaced later
 
@@ -17,13 +18,11 @@ enum token
     PUSH,
     POP,
 
-    LINE,
-    IDENT,
-
     SCALE,
     MOVE,
     ROTATE,
 
+    LINE,
     CIRCLE,
     HERMITE,
     BEZIER,
@@ -32,9 +31,6 @@ enum token
     SPHERE,
     TORUS,
 
-    APPLY,
-
-    CLEAR,
     DISPLAY,
     SAVE,
 
@@ -42,9 +38,13 @@ enum token
 };
 
 enum token get_token (void);
-matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_rix);
-matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_rix);
+void parse_token_2d (const enum token tok, 
+        stack *transform_stack, const unsigned char col[3],
+        const int w, const int h, unsigned char img[h][w][RGB_NUM]);
+void parse_token_3d (const enum token tok, 
+        stack *transform_stack, const unsigned char col[3],
+        const int w, const int h, unsigned char img[h][w][RGB_NUM]);
 void parse_token_meta (const enum token tok, 
-        stack *transform_stack, matrix *e_rix, matrix *p_rix,
+        stack *transform_stack, const unsigned char col[3],
         const int w, const int h, unsigned char img[h][w][RGB_NUM]);
 #endif

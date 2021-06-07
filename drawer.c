@@ -55,6 +55,9 @@ matrix *add_polygon (matrix *points,
         const double x1, const double y1, const double z1,
         const double x2, const double y2, const double z2)
 {
+    //DEBUG
+    //printf ("x0: %0.2lf\ty0: %0.2lf\tz0: %0.2lf\nx1: %0.2lf\ty1: %0.2lf\tz1: %0.2lf\nx2: %0.2lf\ty2: %0.2lf\tz2: %0.2lf\n", x0,y0,z0,x1,y1,z1,x2,y2,z2);
+
     points = add_point (points, x0, y0, z0);
     points = add_point (points, x1, y1, z1);
     points = add_point (points, x2, y2, z2);
@@ -100,6 +103,10 @@ void draw_polygons (matrix *points, const int w, const int h, unsigned char img[
 
         if (0.0 < dot_product (norm, v)) 
         {
+            //DEBUG points
+            //printf ("x0: %d\ty0: %d\tx1: %d\ty1: %d\tx2: %d\ty2: %d\n",x2,y2,x1,y1,x0,y0);
+
+
             draw_line (x0, y0, x1, y1, w, h, img, color);
             draw_line (x0, y0, x2, y2, w, h, img, color);
             draw_line (x1, y1, x2, y2, w, h, img, color);
@@ -382,7 +389,7 @@ matrix *generate_sphere (
 {
     matrix *out = mk_matrix (0);
 
-    /*
+    ///*
     const double tchng = M_PI / (step);
     const double uchng = 2 * M_PI / (step);
 
@@ -395,14 +402,18 @@ matrix *generate_sphere (
                     r * sin (t) * cos (u) + cy,
                     r * sin (t) * sin (u) + cz
                     );
+            //DEBUG
+            //printf ("sphere point: (%0.2f, %0.2f, %0.2f)\n",r * cos (t) + cx, r * sin (t) * cos (u) + cy,r * sin (t) * sin (u) + cz);
         }
-    */
+    //*/
+
+    /*
     //DW CODE
     int circle, rotation, rot_start, rot_stop, circ_start, circ_stop;
     double x,y,z,rot,circ;
 
     rot_start = 0;
-    rot_stop = step;
+    rot_stop = 1;
     circ_start = 0;
     circ_stop = step;
     for (rotation = rot_start; rotation < rot_stop; rotation++)
@@ -415,12 +426,13 @@ matrix *generate_sphere (
             x = r * cos(M_PI * circ) + cx;
             y = r * sin(M_PI * circ) * cos(2*M_PI * rot) + cy;
             z = r * sin(M_PI * circ) * sin(2*M_PI * rot) + cz;
-            /* printf("rotation: %d\tcircle: %d\n", rotation, circle); */
-            /* printf("rot: %lf\tcirc: %lf\n", rot, circ); */
-            /* printf("sphere point: (%0.2f, %0.2f, %0.2f)\n\n", x, y, z); */
+            //printf("rotation: %d\tcircle: %d\n", rotation, circle);
+            //printf("rot: %lf\tcirc: %lf\n", rot, circ);
+            //printf("sphere point: (%0.2f, %0.2f, %0.2f)\n\n", x, y, z);
             out = add_point(out, x, y, z);
         }
     }
+    */
     return out;
 }
 
@@ -429,21 +441,29 @@ matrix *generate_sphere (
  * returns: edge matrix
 */
 
+//only helper->mtrx[p0][smthng] is right and I don't know why (run to compare more stuff)
 matrix *add_sphere (matrix *edges,
         const double cx, const double cy, const double cz,
         const double r, const int step
         )
 {
     matrix *helper = generate_sphere (cx, cy, cz, r, step);
+    //DEBUG
+    //print_matrix (helper);
+
     int i,j;
     for (i = 0; i < step; i++)
     {
-        for (j = 1; j < step; j++)
+        for (j = 0; j < step; j++)
         {
             const int p0 = i * (step+1) + j;
             const int p1 = p0 + 1;
             const int p2 = (p1 + step) % (step * (step+1));
             const int p3 = (p0 + step) % (step * (step+1));
+
+            //DEBUG
+            //printf ("p0: %d\tp1: %d\tp2: %d\tp3: %d\n",p0,p1,p2,p3);
+            //printf ("points: %.02lf, %.02lf, %.02lf, %.02lf\n", helper->mtrx[p0][2],helper->mtrx[p1][2],helper->mtrx[p2][2],helper->mtrx[p3][2]);
 
             edges = add_polygon (edges,
                     helper->mtrx[p0][0], helper->mtrx[p0][1], helper->mtrx[p0][2],
