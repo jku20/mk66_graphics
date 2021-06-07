@@ -3,6 +3,7 @@
 #include "matrix.h"
 #include "io.h"
 #include "drawer.h"
+#include "stack.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -16,8 +17,8 @@
 enum token get_token (void)
 {
     //psudo map, essentually hashing the tokens by a predefined index
-    static const char *tokens[] = {"line", "ident", "scale", "move", "rotate", "apply", "display", "save", "circle", "hermite", "bezier", "clear", "box", "sphere", "torus", NULL};
-    static const enum token semantics[] = {LINE, IDENT, SCALE, MOVE, ROTATE, APPLY, DISPLAY, SAVE, CIRCLE, HERMITE, BEZIER, CLEAR, BOX, SPHERE, TORUS};
+    static const char *tokens[] = {"line", "ident", "scale", "move", "rotate", "apply", "display", "save", "circle", "hermite", "bezier", "clear", "box", "sphere", "torus", "push", "pop", NULL};
+    static const enum token semantics[] = {LINE, IDENT, SCALE, MOVE, ROTATE, APPLY, DISPLAY, SAVE, CIRCLE, HERMITE, BEZIER, CLEAR, BOX, SPHERE, TORUS, PUSH, POP};
 
     char buff[MAX_BUFFER_SIZE];
 
@@ -48,7 +49,7 @@ enum token get_token (void)
  * returns: pointer to e_rix
 */
 
-matrix *parse_token_2d (const enum token tok, matrix *t_rix, matrix *e_rix)
+matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_rix)
 {
     char buff[MAX_BUFFER_SIZE];
 
@@ -110,7 +111,7 @@ matrix *parse_token_2d (const enum token tok, matrix *t_rix, matrix *e_rix)
     return e_rix;
 }
 
-matrix *parse_token_3d (const enum token tok, matrix *t_rix, matrix *p_rix) 
+matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_rix) 
 {
     char buff[MAX_BUFFER_SIZE];
 
@@ -163,7 +164,7 @@ matrix *parse_token_3d (const enum token tok, matrix *t_rix, matrix *p_rix)
 }
 
 void parse_token_meta (const enum token tok, 
-        matrix *t_rix, matrix *e_rix, matrix *p_rix,
+        stack *transform_stack, matrix *e_rix, matrix *p_rix,
         const int w, const int h, unsigned char img[h][w][RGB_NUM]) 
 {
     char buff[MAX_BUFFER_SIZE];
@@ -180,6 +181,12 @@ void parse_token_meta (const enum token tok,
             break;
         case INVALID:
             break;
+        case PUSH:
+            push (transform_stack);
+            break;
+        case POP:
+            pop (transform_stack);
+            break;
         case IDENT:
             ident (t_rix);
             break;
@@ -189,7 +196,7 @@ void parse_token_meta (const enum token tok,
 
             //make functions which just morph an array in the future
             tmp = mk_scale (sx, sy, sz);
-            matrix_mult (tmp, t_rix);
+            matrix_mult (peek (transform_stack), tmp);
             free_matrix (tmp), tmp = NULL;
             break;
         case MOVE:
@@ -197,9 +204,9 @@ void parse_token_meta (const enum token tok,
             sscanf (buff, "%lf %lf %lf", &tx, &ty, &tz);
 
             tmp = mk_translate (tx, ty, tz);
-            matrix_mult (tmp, t_rix);
+            matrix_mult (peek (transform_stack, tmp));
 
-            free_matrix (tmp); tmp = NULL;
+            free_matrix (tmp), tmp = NULL;
             break;
         case ROTATE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -210,21 +217,22 @@ void parse_token_meta (const enum token tok,
             if (axis == 'x')
             {
                 tmp = mk_rot_xaxis (theta);
-                matrix_mult (tmp, t_rix);
-                free_matrix (tmp);
             }
             else if (axis == 'y')
             {
                 tmp = mk_rot_yaxis (theta);
-                matrix_mult (tmp, t_rix);
-                free_matrix (tmp);
             }
             else if (axis == 'z')
             {
                 tmp = mk_rot_zaxis (theta);
-                matrix_mult (tmp, t_rix);
-                free_matrix (tmp);
             }
+            else 
+            {
+                tmp = mk_matrix (4);
+                ident (tmp);
+            }
+            matrix_mult (peek (transform_stack), tmp);
+            free_matrix (tmp), tmp = NULL;
             break;
         case APPLY:
             matrix_mult (t_rix, e_rix);
