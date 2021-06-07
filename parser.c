@@ -55,6 +55,8 @@ matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_
 
     double x0,x1,x2,x3,y0,y1,y2,y3,z0,z1;
     double cx, cy, cz, r;
+
+    matrix *edges = mk_matrix (0);
     switch (tok)
     {
         case END:
@@ -67,36 +69,51 @@ matrix *parse_token_2d (const enum token tok, stack *transform_stack, matrix *e_
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf %lf %lf %lf", &x0, &y0, &z0, &x1, &y1, &z1);
 
-            e_rix = add_edge (e_rix, x0, y0, z0, x1, y1, z1);
-            return e_rix;
+            edges = add_edge (edges, x0, y0, z0, x1, y1, z1);
+            matrix_mult (peek (transform_stack), edges);
+
+            draw_lines (edges, w, h, img, col);
+            free_matrix (edges), edges = NULL;
+
+            return NULL;
             break;
         case CIRCLE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf %lf", &cx, &cy, &cz, &r);
 
-            e_rix = add_circle (e_rix, cx, cy, cz, r, STEP_SIZE);
+            edges = add_circle (edges, cx, cy, cz, r, STEP_SIZE);
+            matrix_mult (peek (transform_stack), edges);
 
-            return e_rix;
+            draw_lines (edges, w, h, img, col);
+            free_matrix (edges), edges = NULL;
+
+            return NULL;
             break;
         case HERMITE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf %lf %lf %lf %lf %lf", &x0, &y0, &x1, &y1, &x2, &y2, &x3, &y3);
             
-            e_rix = add_curve (e_rix,x0,y0,x1,y1,x2,y2,x3,y3,STEP_SIZE,HERMITE_T);
+            edges = add_curve (edges,x0,y0,x1,y1,x2,y2,x3,y3,STEP_SIZE,HERMITE_T);
+            matrix_mult (peek (transform_stack), edges);
 
-            return e_rix;
+            draw_lines (edges, w, h, img, col);
+            free_matrix (edges), edges = NULL;
+
+            return NULL;
             break;
         case BEZIER:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf %lf %lf %lf %lf %lf", &x0, &y0, &x1, &y1, &x2, &y2, &x3, &y3);
             
-            e_rix = add_curve (e_rix,x0,y0,x1,y1,x2,y2,x3,y3,STEP_SIZE,BEZIER_T);
+            edges = add_curve (edges,x0,y0,x1,y1,x2,y2,x3,y3,STEP_SIZE,BEZIER_T);
+            matrix_mult (peek (transform_stack), edges);
 
-            return e_rix;
+            draw_lines (edges, w, h, img, col);
+            free_matrix (edges), edges = NULL;
 
+            return NULL;
             break;
 
-        //to to implement the bellow
         case CLEAR:
             e_rix = free_matrix (e_rix);
             return mk_matrix (0);
@@ -118,6 +135,8 @@ matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_
     double x0,y0,z0;
     double r, r1, r2;
     double width, height, depth;
+
+    matrix *polygons = mk_matrix (0):
     switch (tok)
     {
         case END:
@@ -126,7 +145,6 @@ matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_
         case INVALID:
             return p_rix;
             break;
-        //to to implement the bellow
         case CLEAR:
             p_rix = free_matrix (p_rix);
             return mk_matrix (0);
@@ -134,24 +152,38 @@ matrix *parse_token_3d (const enum token tok, stack *transform_stack, matrix *p_
         case BOX:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf %lf %lf %lf", &x0, &y0, &z0, &width, &height, &depth);
-            p_rix = add_box (p_rix, x0, y0, z0, width, height, depth);
 
-            return p_rix;
+            polygons = add_box (polygons, x0, y0, z0, width, height, depth);
+            matrix_mult (peek (transform_stack), polygons);
+
+            draw_polygons (polygons, w, h, img, col);
+            free_matrix (polygons), polygons = NULL;
+
+            return NULL;
             break;
         case SPHERE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf %lf", &x0, &y0, &z0, &r);
 
-            p_rix = add_sphere (p_rix, x0, y0, z0, r, STEP_SIZE);
+            polygons = add_sphere (polygons, x0, y0, z0, r, STEP_SIZE);
+            matrix_mult (peek (transform_stack), polygons);
 
-            return p_rix;
+            draw_polygons (polygons, w, h, img, col);
+            free_matrix (polygons), polygons = NULL;
+
+            return NULL;
             break;
         case TORUS:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
             sscanf (buff, "%lf %lf %lf %lf %lf", &x0, &y0, &z0, &r1, &r2);
 
-            p_rix = add_torus (p_rix, x0, y0, z0, r1, r2, STEP_SIZE);
-            return p_rix;
+            polygons = add_torus (polygons, x0, y0, z0, r1, r2, STEP_SIZE);
+            matrix_mult (peek (transform_stack), polygons);
+
+            draw_polygons (polygons, w, h, img, col);
+            free_matrix (polygons), polygons = NULL;
+
+            return NULL;
             break;
         default:
             return p_rix;
@@ -197,6 +229,8 @@ void parse_token_meta (const enum token tok,
             //make functions which just morph an array in the future
             tmp = mk_scale (sx, sy, sz);
             matrix_mult (peek (transform_stack), tmp);
+            cpy_matrix (tmp, peek (transform_stack));
+
             free_matrix (tmp), tmp = NULL;
             break;
         case MOVE:
@@ -205,6 +239,7 @@ void parse_token_meta (const enum token tok,
 
             tmp = mk_translate (tx, ty, tz);
             matrix_mult (peek (transform_stack, tmp));
+            cpy_matrix (tmp, peek (transform_stack));
 
             free_matrix (tmp), tmp = NULL;
             break;
@@ -232,6 +267,8 @@ void parse_token_meta (const enum token tok,
                 ident (tmp);
             }
             matrix_mult (peek (transform_stack), tmp);
+            cpy_matrix (tmp, peek (transform_stack));
+
             free_matrix (tmp), tmp = NULL;
             break;
         case APPLY:
@@ -239,10 +276,6 @@ void parse_token_meta (const enum token tok,
             matrix_mult (t_rix, p_rix);
             break;
         case DISPLAY:
-            clear_screen (w, h, img);
-            draw_lines (e_rix, w, h, img, col);
-            draw_polygons (p_rix, w, h, img, col);
-
             flip_y (w, h, img);
             display (w, h, img);
             flip_y (w, h, img);
