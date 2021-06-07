@@ -60,10 +60,8 @@ void parse_token_2d (const enum token tok,
     switch (tok)
     {
         case END:
-            return;
             break;
         case INVALID:
-            return;
             break;
         case LINE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -73,9 +71,6 @@ void parse_token_2d (const enum token tok,
             matrix_mult (peek (transform_stack), edges);
 
             draw_lines (edges, w, h, img, col);
-            free_matrix (edges), edges = NULL;
-
-            return;
             break;
         case CIRCLE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -85,9 +80,6 @@ void parse_token_2d (const enum token tok,
             matrix_mult (peek (transform_stack), edges);
 
             draw_lines (edges, w, h, img, col);
-            free_matrix (edges), edges = NULL;
-
-            return;
             break;
         case HERMITE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -97,9 +89,6 @@ void parse_token_2d (const enum token tok,
             matrix_mult (peek (transform_stack), edges);
 
             draw_lines (edges, w, h, img, col);
-            free_matrix (edges), edges = NULL;
-
-            return;
             break;
         case BEZIER:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -109,18 +98,13 @@ void parse_token_2d (const enum token tok,
             matrix_mult (peek (transform_stack), edges);
 
             draw_lines (edges, w, h, img, col);
-            free_matrix (edges), edges = NULL;
-
-            return;
             break;
 
         default:
-            return;
             break;
     }
 
-    //really shouldn't ever get here but eh, just to be safe
-    printf ("something has gone horribly wrong from parse_token_2d\n");
+    free_matrix (edges), edges = NULL;
     return;
 }
 
@@ -138,10 +122,8 @@ void parse_token_3d (const enum token tok,
     switch (tok)
     {
         case END:
-            return;
             break;
         case INVALID:
-            return;
             break;
         case BOX:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -151,9 +133,6 @@ void parse_token_3d (const enum token tok,
             matrix_mult (peek (transform_stack), polygons);
 
             draw_polygons (polygons, w, h, img, col);
-            free_matrix (polygons), polygons = NULL;
-
-            return;
             break;
         case SPHERE:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -163,9 +142,6 @@ void parse_token_3d (const enum token tok,
             matrix_mult (peek (transform_stack), polygons);
 
             draw_polygons (polygons, w, h, img, col);
-            free_matrix (polygons), polygons = NULL;
-
-            return;
             break;
         case TORUS:
             fgets (buff, MAX_BUFFER_SIZE, stdin);
@@ -175,17 +151,12 @@ void parse_token_3d (const enum token tok,
             matrix_mult (peek (transform_stack), polygons);
 
             draw_polygons (polygons, w, h, img, col);
-            free_matrix (polygons), polygons = NULL;
-
-            return;
             break;
         default:
-            return;
             break;
     }
 
-    //really shouldn't ever get here but eh, just to be safe
-    printf ("something has gone horribly wrong from parse_token_3d\n");
+    free_matrix (polygons);
     return;
 }
 
